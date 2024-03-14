@@ -11,7 +11,6 @@ ArrayList<DataPoint> dataPoints;
 int numDataPoints = 18;
 
 void setup() {
-  fullScreen();
   readData();
   result = default_query;        //result = default_query();
   current_query = query3;        //current_query = query3;// whatever type of query is default
@@ -45,16 +44,15 @@ void mousePressed()
 //}
 }
 
-void readData() {
-  flights = loadStrings("flights-2k");
+void readData(){
+  String[] lines = loadStrings("flights-2k"); 
+  
   dataPoints = new ArrayList<DataPoint>();
-
-  for (String line : flights) {
-    String[] flightData = line.split(" , ");
-    if (flightData.length == numDataPoints) {
-      
-      DataPoint dataPoint = new DataPoint(flightData);
-      dataPoints.add(dataPoint);
-    }
+  
+  // Parse each line and create DataPoint objects
+  for (int i = 1; i < lines.length; i++) {
+    String[] parts = split(lines[i], ","); 
+    DataPoint dp = new DataPoint(parts);
+    dataPoints.add(dp);
   }
 }
