@@ -1,43 +1,43 @@
 class DataPoint // not DataPoints
 {
-  String FL_DATE;
-  String MKT_CARRIER;
-  int MKT_CARRIER_FL_NUM;
-  String ORIGIN;
-  String ORIGIN_CITY_NAME;
-  String ORIGIN_STATE_ABR;
-  int ORIGIN_WAC;
-  String DEST;
-  String DEST_CITY_NAME;
-  String DEST_STATE_ABR;
-  int DEST_WAC;
-  int CRS_DEP_TIME;
-  int DEP_TIME;
-  int CRS_ARR_TIME;
-  int ARR_TIME;
-  int CANCELLED;
-  int DIVERTED;
-  int DISTANCE;
+  String flDate;
+  String mktCarrier;
+  int  mktCarrierFlNum;
+  String origin;
+  String originCityName;
+  String  originStateAbr;
+  int  originWac;
+  String dest;
+  String destCityName;
+  String  destStateAbr;
+  int destWac;
+  int crsDepTime;
+  int depTime;
+  int crsArrTime;
+  int arrTime;
+  int  cancelled;
+  int diverted;
+  int distance;
     
     DataPoint(String flightData[]){
-      FL_DATE = flightData[0];
-        MKT_CARRIER = flightData[1];
-        MKT_CARRIER_FL_NUM = Integer.parseInt(flightData[2]);
-        ORIGIN = flightData[3];
-        ORIGIN_CITY_NAME = flightData[4];
-        ORIGIN_STATE_ABR = flightData[5];
-        ORIGIN_WAC = Integer.parseInt(flightData[6]);
-        DEST = flightData[7];
-        DEST_CITY_NAME = flightData[8];
-        DEST_STATE_ABR = flightData[9];
-        DEST_WAC = Integer.parseInt(flightData[10]);
-        CRS_DEP_TIME = Integer.parseInt(flightData[11]);
-        DEP_TIME = Integer.parseInt(flightData[12]);
-        CRS_ARR_TIME = Integer.parseInt(flightData[13]);
-        ARR_TIME = Integer.parseInt(flightData[14]);
-        CANCELLED = Integer.parseInt(flightData[15]);
-        DIVERTED = Integer.parseInt(flightData[16]);
-        DISTANCE = Integer.parseInt(flightData[17]);      
+      flDate = flightData[0];
+        mktCarrier = flightData[1];
+        mktCarrierFlNum = Integer.parseInt(flightData[2]);
+        origin = flightData[3];
+        originCityName = flightData[4];
+        originStateAbr = flightData[5];
+        originWac = Integer.parseInt(flightData[6]);
+        dest = flightData[7];
+        destCityName = flightData[8];
+        destStateAbr = flightData[9];
+        destWac = Integer.parseInt(flightData[10]);
+        crsDepTime = Integer.parseInt(flightData[11]);
+        depTime = Integer.parseInt(flightData[12]);
+        crsArrTime = Integer.parseInt(flightData[13]);
+        arrTime = Integer.parseInt(flightData[14]);
+        cancelled = Integer.parseInt(flightData[15]);
+        diverted = Integer.parseInt(flightData[16]);
+        distance = Integer.parseInt(flightData[17]);      
     }
 
 }
