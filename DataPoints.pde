@@ -40,24 +40,24 @@ class DataPoint {
   }
   
   String getInfo() {
-    String line = "Flight Date: " + flDate +
-           "Marketing Carrier: " + mktCarrier +
-           "Marketing Carrier Flight Number: " + mktCarrierFlNum +
-           "Origin: " + origin +
-           "Origin City Name: " + originCityName +
-           "Origin State Abbreviation: " + originStateAbr +
-           "Origin World Area Code: " + originWac +
-           "Destination: " + dest +
-           "Destination City Name: " + destCityName +
-           "Destination State Abbreviation: " + destStateAbr +
-           "Destination World Area Code: " + destWac+
-           "Scheduled Departure Time: " + crsDepTime +
-           "Actual Departure Time: " + depTime +
-           "Scheduled Arrival Time: " + crsArrTime +
-           "Actual Arrival Time: " + arrTime +
-           "Cancelled: " + cancelled +
-           "Diverted: " + diverted +
-           "Distance: " + distance;
+    String line = "Flight Date: " + flDate + " " +
+           "Marketing Carrier: " + mktCarrier + " "+
+           "Marketing Carrier Flight Number: " + mktCarrierFlNum + " " +
+           "Origin: " + origin + " " +
+           "Origin City Name: " + originCityName + " " +
+           "Origin State Abbreviation: " + originStateAbr + " " +
+           "Origin World Area Code: " + originWac + " " +
+           "Destination: " + dest + " " +
+           "Destination City Name: " + destCityName + " " +
+           "Destination State Abbreviation: " + destStateAbr + " " +
+           "Destination World Area Code: " + destWac+ " " +
+           "Scheduled Departure Time: " + crsDepTime + " " +
+           "Actual Departure Time: " + depTime + " " +
+           "Scheduled Arrival Time: " + crsArrTime + " " +
+           "Actual Arrival Time: " + arrTime + " " +
+           "Cancelled: " + cancelled + " " +
+           "Diverted: " + diverted + " " +
+           "Distance: " + distance; 
     return line;
   }
 }
