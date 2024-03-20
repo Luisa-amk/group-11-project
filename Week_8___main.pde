@@ -16,7 +16,7 @@ float lineHeight = 20;
 
 
 void setup() {
-  fullScreen();
+  size (400,400);
   background (255); 
   
   readData(); // read file
