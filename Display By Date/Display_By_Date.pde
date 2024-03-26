@@ -2,9 +2,9 @@ String[] flights;
 String[] lines;
 import java.util.ArrayList;
 int result;
-int query1 = 1;
-int query2 = 2;
-int query3 = 3;
+final int QUERY_1 = 1;
+final int QUERY_2 = 2;
+final int QUERY_3 = 3;
 int default_query;
 int current_query;
 boolean cancelled;
@@ -17,51 +17,49 @@ String cancelledTime = "5";
 PFont stdFont;
 ArrayList widgetList;
 TextWidget focus;
-static final int TEXT_WIDGET=1;
+static final int TEXT_WIDGET=4;
 static final int EVENT_NULL=0;
-static final int EVENT_TEXT = 1;
-static final int EVENT_FORWARD = 2;
-static final int EVENT_BACKWARD = 3;
-Screen currentScreen, screen1, screen2;
+static final int EVENT_TEXT = 4;
+static final int EVENT_FORWARD = 5;
+static final int EVENT_HOME = 6;
+Screen currentScreen, dateInputScreen, dateBarChart, homePage;
 int dateLow = 0;
 int dateHigh = 0;
-TextWidget date1;
-TextWidget date2;
-Widget showByDate;
-Widget returnToMainPage;
+TextWidget date1, date2;
+Widget showByDate, returnToHomePage, query1, query2, query3;
 boolean invalidInput = false;
 
 void setup() {
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
-  date1=new TextWidget(400, 75, 50, 40, 5,
-    "", color(0), stdFont, TEXT_WIDGET, 10);
-  date2=new TextWidget(500, 75, 50, 40, 5,
-    "", color(0), stdFont, TEXT_WIDGET, 10);
-  showByDate=new Widget(1000, 75, 100, 40, 5,
-    "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
-  returnToMainPage = new Widget(1000, 75, 250, 40, 5,
-    "return to the main page", color(185, 168, 238), stdFont, EVENT_BACKWARD);
+  date1=new TextWidget(400, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
+  date2=new TextWidget(500, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
+  showByDate=new Widget(1000, 75, 100, 40, 5, "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
+  returnToHomePage = new Widget(1000, 75, 250, 40, 5, 
+    "return to the home page", color(185, 168, 238), stdFont, EVENT_HOME);
+  query1 = new Widget(550, 150, 100, 40, 5, "query 1", color(185, 168, 238), stdFont, QUERY_1);
+  query2 = new Widget(550, 250, 100, 40, 5, "query 2", color(185, 168, 238), stdFont, QUERY_2);
+  query3 = new Widget(550, 350, 100, 40, 5, "query 3", color(185, 168, 238), stdFont, QUERY_3);
   focus=null;
-  screen1 = new Screen(color(255));
-  screen2 = new Screen(color(255));
-  currentScreen = screen1;
+  homePage = new Screen(color(255));
+  dateInputScreen = new Screen(color(255));
+  dateBarChart = new Screen(color(255));
+  currentScreen = homePage;
 
-  screen1.add(date1);
-  screen1.add(date2);
-  screen1.add(showByDate);
-  screen2.add(returnToMainPage);
+  homePage.add(query1);
+  homePage.add(query2);
+  homePage.add(query3);
 
-  current_query = query1;
+  dateInputScreen.add(date1);
+  dateInputScreen.add(date2);
+  dateInputScreen.add(showByDate);
+  dateBarChart.add(returnToHomePage);
 
   fullScreen();
   readData();
-  result = default_query;        //result = default_query();
-  current_query = query1;        //current_query = query3;// whatever type of query is default
 
   for (DataPoint dp : dataPoints )
   {
-
     println(dp.flDate + " " + dp.mktCarrier + " " + dp. mktCarrierFlNum + " " + dp.origin + " " + dp.originCityName + " " + dp.originStateInit + " " +
       dp.originStateAbr + " " + dp.originWac + " " + dp.dest + " " + dp.destCityName +  " " + dp.destCityInit + " " +  dp.destStateAbr + " " + dp.destWac +
       dp.crsDepTime + " " + dp.depTime + " " + dp.crsArrTime + " " + dp.arrTime + " " +  dp.cancelled + " " + dp.diverted + " " + dp.distance );
@@ -71,18 +69,15 @@ void setup() {
 }
 void draw() {
   currentScreen.draw();
-  //switch(current_query) {
-  //case 1:
-    
-    //render_query1(results);
-   // break;
-    //case 2:
-    // println("Pick a city");
-    //render_query2(results);
-    // break;
- // }
+
   widgetList = new ArrayList();
-  if(currentScreen == screen1)
+  if(currentScreen == homePage)
+  {
+    widgetList.add(query1);
+    widgetList.add(query2);
+    widgetList.add(query3);
+  }
+  if(currentScreen == dateInputScreen)
   {
     text("Enter a date from 1 to 31:", 100, 100);
     text("to", 470, 100);
@@ -95,52 +90,30 @@ void draw() {
     widgetList.add(date2);
     widgetList.add(showByDate);
   }
-  else if (currentScreen == screen2)
+  else if (currentScreen == dateBarChart)
   {
-    widgetList.add(returnToMainPage);
+    widgetList.add(returnToHomePage);
   }
   for (int i = 0; i < widgetList.size(); i++) {
     ((Widget)widgetList.get(i)).draw();
   }
-  //render_controls();
 }
 void mousePressed()
-{
-  ////Work out which button pressed
-  //switch(event)
-  //{
-  //case button1:
-  //   current_query = query1;
-  //   results=query1();
-  //   break;
-  //case button2:
-  //   current_query = query2;
-  //   results=query2();
-  //   break;
-  //}
-
-  //BUTTON FORWARD AND BACKWARD WORK BUT NOT THE TEXT WIDGETS ANYMORE
-  //switch(currentScreen.getEvent(mouseX, mouseY)) {
-  //case TEXT_WIDGET:
-  //  println("text widget");
-  //  break;
-  //case EVENT_FORWARD:
-  //  println("forward");
-  //  currentScreen = screen2;
-  //  break;
-  //case EVENT_BACKWARD:
-  //  println("backward");
-  //  currentScreen = screen1;
-  //  break;
-  //}
-  
-  
-  
+{ 
   int event;
   for (int i = 0; i < widgetList.size(); i++) {
     Widget theWidget = (Widget)widgetList.get(i);
     event = theWidget.getEvent(mouseX, mouseY);
     switch(event) {
+    case QUERY_1:
+      currentScreen = dateInputScreen;
+      break;
+    case QUERY_2:
+      currentScreen = dateInputScreen;
+      break;
+    case QUERY_3:
+      currentScreen = dateInputScreen;
+      break;
     case TEXT_WIDGET:
       println("clicked a text widget");
       focus = (TextWidget) theWidget;
@@ -151,19 +124,17 @@ void mousePressed()
       {
         println("invalid input");
         invalidInput = true;
-        dateLow = 0;
-        dateHigh = 0;
       }
       else
       {
-        currentScreen = screen2;
+        currentScreen = dateBarChart;
         invalidInput = false;
       }
       focus = null;
       break;
-    case EVENT_BACKWARD:
-      println("backward");
-      currentScreen = screen1;
+    case EVENT_HOME:
+      println("home");
+      currentScreen = homePage;
       focus = null;
       break;
     }
@@ -206,13 +177,28 @@ void keyPressed() {
       {
         dateHigh = keyValue;
       }
+      else if(key == BACKSPACE)
+      {
+        dateHigh = dateHigh / 10;
+      }
       else
       {
         dateHigh = dateHigh*10 + keyValue;
       }
     }
-    println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
-  }  
+  }
+  else if(key == BACKSPACE)
+  {
+    if (focus == date1) 
+    {
+      dateLow = dateLow / 10; // Remove last digit
+    } 
+    else if (focus == date2) 
+    {
+      dateHigh = dateHigh / 10; // Remove last digit
+    }   
+  }
+  println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
 }
 
 void readData() {

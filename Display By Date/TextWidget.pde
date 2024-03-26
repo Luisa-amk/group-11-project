@@ -16,10 +16,16 @@ class TextWidget extends Widget {
     this.maxlen=maxlen;
   }
   void append(char s) {
-    if (s==BACKSPACE) {
+    if (s==BACKSPACE) 
+    {
       if (!label.equals(""))
+      {
         label=label.substring(0, label.length()-1);
-    } else if (label.length() <maxlen)
+      }
+    } 
+    else if (label.length() <maxlen)
+    {
       label=label+str(s);
+    }
   }
 }
