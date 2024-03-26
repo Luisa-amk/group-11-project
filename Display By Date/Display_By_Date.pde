@@ -29,6 +29,7 @@ TextWidget date1;
 TextWidget date2;
 Widget showByDate;
 Widget returnToMainPage;
+boolean invalidInput = false;
 
 void setup() {
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
@@ -86,6 +87,10 @@ void draw() {
     text("Enter a date from 1 to 31:", 100, 100);
     text("to", 470, 100);
     text("January 2022", 580, 100);
+    if(invalidInput)
+    {
+      text("Invalid Input", 990, 150);
+    }
     widgetList.add(date1);
     widgetList.add(date2);
     widgetList.add(showByDate);
@@ -128,6 +133,9 @@ void mousePressed()
   //  currentScreen = screen1;
   //  break;
   //}
+  
+  
+  
   int event;
   for (int i = 0; i < widgetList.size(); i++) {
     Widget theWidget = (Widget)widgetList.get(i);
@@ -139,7 +147,18 @@ void mousePressed()
       return;
     case EVENT_FORWARD:
       println("forward");
-      currentScreen = screen2;
+      if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31)
+      {
+        println("invalid input");
+        invalidInput = true;
+        dateLow = 0;
+        dateHigh = 0;
+      }
+      else
+      {
+        currentScreen = screen2;
+        invalidInput = false;
+      }
       focus = null;
       break;
     case EVENT_BACKWARD:
@@ -167,25 +186,33 @@ void keyPressed() {
   if (focus != null) {
     focus.append(key);
   }
-  //if(Character.isDigit(key))
-  //{
-  //inputText = (int) key;
-  //}
-  //if (key >= 0 && key <= 9)
-  //{
-  int count=0;
-  if (keyPressed) count++;
-  if (count == 1)
+  if(Character.isDigit(key))
   {
-    dateLow = key-48;
-    println(dateLow);
-  } else if (count > 1)
-  {
-    dateHigh = key-48;
-    println(dateHigh);
-  }
-
-  //}
+    int keyValue = Character.getNumericValue(key);
+    if(focus == date1)
+    {
+      if(dateLow == 0)
+      {
+        dateLow = keyValue;
+      }
+      else
+      {
+        dateLow = dateLow*10 + keyValue;
+      }
+    }
+    else if (focus == date2)
+    {
+      if(dateHigh == 0)
+      {
+        dateHigh = keyValue;
+      }
+      else
+      {
+        dateHigh = dateHigh*10 + keyValue;
+      }
+    }
+    println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
+  }  
 }
 
 void readData() {
