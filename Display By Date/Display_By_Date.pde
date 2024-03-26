@@ -15,42 +15,44 @@ String cancelledTime = "5";
 
 // variables for button widget
 PFont stdFont;
-ArrayList myWidgets;
+ArrayList widgetList;
 TextWidget focus;
 static final int TEXT_WIDGET=1;
 static final int EVENT_NULL=0;
 static final int EVENT_TEXT = 1;
-static final int EVENT_BUTTON1 = 2;
-static final int EVENT_BUTTON2 = 3;
+static final int EVENT_FORWARD = 2;
+static final int EVENT_BACKWARD = 3;
 Screen currentScreen, screen1, screen2;
 int dateLow = 0;
 int dateHigh = 0;
+TextWidget date1;
+TextWidget date2;
+Widget showByDate;
+Widget returnToMainPage;
 
 void setup() {
   stdFont=loadFont("SegoeUI-20.vlw");
   textFont(stdFont);
-  TextWidget date1=new TextWidget(400, 75, 50, 40,
+  date1=new TextWidget(400, 75, 50, 40,
     "", color(0), stdFont, TEXT_WIDGET, 10);
-  TextWidget date2=new TextWidget(500, 75, 50, 40,
-   "", color(0), stdFont, TEXT_WIDGET, 10);
-  Widget showByDate=new Widget(1000, 75, 100, 40,
-    "display", color(200, 0, 0), stdFont, EVENT_BUTTON1);
-  Widget returnToMainPage = new Widget(100, 75, 100, 40,
-    "return to the main page", color(200, 0, 0), stdFont, EVENT_BUTTON2);
+  date2=new TextWidget(500, 75, 50, 40,
+    "", color(0), stdFont, TEXT_WIDGET, 10);
+  showByDate=new Widget(1000, 75, 100, 40,
+    "display", color(50, 150, 0), stdFont, EVENT_FORWARD);
+  returnToMainPage = new Widget(1000, 75, 230, 40,
+    "return to the main page", color(50, 150, 0), stdFont, EVENT_BACKWARD);
   focus=null;
   screen1 = new Screen(color(255));
   screen2 = new Screen(color(100));
-  myWidgets = new ArrayList();
-  myWidgets.add(date1);
-  myWidgets.add(date2);
-  screen1.add(showByDate);
+  currentScreen = screen1;
+
   screen1.add(date1);
   screen1.add(date2);
+  screen1.add(showByDate);
   screen2.add(returnToMainPage);
-  currentScreen = screen1;
-  
+
   current_query = query1;
-  
+
   fullScreen();
   readData();
   result = default_query;        //result = default_query();
@@ -67,7 +69,6 @@ void setup() {
   }
 }
 void draw() {
-  background(200);
   currentScreen.draw();
   switch(current_query) {
   case 1:
@@ -76,13 +77,24 @@ void draw() {
     text("January 2022", 580, 100);
     //render_query1(results);
     break;
-  //case 2:
-   // println("Pick a city");
+    //case 2:
+    // println("Pick a city");
     //render_query2(results);
-   // break;
+    // break;
   }
-  for (int i = 0; i < myWidgets.size(); i++) {
-    ((Widget)myWidgets.get(i)).draw();
+  widgetList = new ArrayList();
+  if(currentScreen == screen1)
+  {
+    widgetList.add(date1);
+    widgetList.add(date2);
+    widgetList.add(showByDate);
+  }
+  else if (currentScreen == screen2)
+  {
+    widgetList.add(returnToMainPage);
+  }
+  for (int i = 0; i < widgetList.size(); i++) {
+    ((Widget)widgetList.get(i)).draw();
   }
   //render_controls();
 }
@@ -100,22 +112,40 @@ void mousePressed()
   //   results=query2();
   //   break;
   //}
+
+  //BUTTON FORWARD AND BACKWARD WORK BUT NOT THE TEXT WIDGETS ANYMORE
+  //switch(currentScreen.getEvent(mouseX, mouseY)) {
+  //case TEXT_WIDGET:
+  //  println("text widget");
+  //  break;
+  //case EVENT_FORWARD:
+  //  println("forward");
+  //  currentScreen = screen2;
+  //  break;
+  //case EVENT_BACKWARD:
+  //  println("backward");
+  //  currentScreen = screen1;
+  //  break;
+  //}
   int event;
-  for (int i = 0; i < myWidgets.size(); i++) {
-    Widget theWidget = (Widget)myWidgets.get(i);
+  for (int i = 0; i < widgetList.size(); i++) {
+    Widget theWidget = (Widget)widgetList.get(i);
     event = theWidget.getEvent(mouseX, mouseY);
     switch(event) {
-    case EVENT_TEXT:
-      println("clicked on a text widget!");
-      focus= (TextWidget)theWidget;
-      return; // using return as no need to check other widgets
-    case EVENT_BUTTON1:
+    case TEXT_WIDGET:
+      println("clicked a text widget");
+      focus = (TextWidget) theWidget;
+      return;
+    case EVENT_FORWARD:
+      println("forward");
       currentScreen = screen2;
-      println("Pressed button.");
-      focus=null;
-      return; // using return as no need to check other widgets
-    default:
-      focus=null;
+      focus = null;
+      break;
+    case EVENT_BACKWARD:
+      println("backward");
+      currentScreen = screen1;
+      focus = null;
+      break;
     }
   }
 }
@@ -132,30 +162,29 @@ void mouseMoved() {
   }
 }
 
-void keyPressed(){
- if(focus != null) {
- focus.append(key);
- }
- //if(Character.isDigit(key))
- //{
+void keyPressed() {
+  if (focus != null) {
+    focus.append(key);
+  }
+  //if(Character.isDigit(key))
+  //{
   //inputText = (int) key;
- //}
- //if (key >= 0 && key <= 9)
- //{
-   int count=0;
-   if(keyPressed) count++;
-   if (count == 1)
-   {
+  //}
+  //if (key >= 0 && key <= 9)
+  //{
+  int count=0;
+  if (keyPressed) count++;
+  if (count == 1)
+  {
     dateLow = key-48;
     println(dateLow);
-   }
-   else if (count > 1)
-   {
-     dateHigh = key-48;
-     println(dateHigh);
-   }
-   
- //}
+  } else if (count > 1)
+  {
+    dateHigh = key-48;
+    println(dateHigh);
+  }
+
+  //}
 }
 
 void readData() {
