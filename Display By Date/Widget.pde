@@ -1,15 +1,17 @@
 class Widget {
-  int x, y, width, height;
+  int x, y, width, height, cornerRadius;
   String label;
   int event;
   color widgetColor, labelColor, lineColor;
   PFont widgetFont;
-  Widget(int x, int y, int width, int height, String label,
+  
+  Widget(int x, int y, int width, int height, int cornerRadius, String label,
     color widgetColor, PFont widgetFont, int event) {
     this.x=x;
     this.y=y;
     this.width = width;
     this.height= height;
+    this.cornerRadius = cornerRadius;
     this.label=label;
     this.event=event;
     this.widgetColor=widgetColor;
@@ -20,17 +22,18 @@ class Widget {
   void draw() {
     fill(widgetColor);
     stroke(lineColor);
-    rect(x, y, width, height);
+    strokeWeight(2);
+    rect(x, y, width, height, cornerRadius);
     fill(labelColor);
     text(label, x+10, y+height-10);
   }
   void mouseOver() {
     lineColor = color(255);
-    widgetColor = color(50, 150, 0, 100);
+    widgetColor = color(185, 168, 238, 100);
   }
   void mouseNotOver() {
     lineColor = color(0);
-    widgetColor = color(50, 150, 0);
+    widgetColor = color(185, 168, 238);
   }
   int getEvent(int mX, int mY) {
     if (mX>x && mX < x+width && mY >y && mY <y+height) {

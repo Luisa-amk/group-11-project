@@ -31,19 +31,19 @@ Widget showByDate;
 Widget returnToMainPage;
 
 void setup() {
-  stdFont=loadFont("SegoeUI-20.vlw");
+  stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
-  date1=new TextWidget(400, 75, 50, 40,
+  date1=new TextWidget(400, 75, 50, 40, 5,
     "", color(0), stdFont, TEXT_WIDGET, 10);
-  date2=new TextWidget(500, 75, 50, 40,
+  date2=new TextWidget(500, 75, 50, 40, 5,
     "", color(0), stdFont, TEXT_WIDGET, 10);
-  showByDate=new Widget(1000, 75, 100, 40,
-    "display", color(50, 150, 0), stdFont, EVENT_FORWARD);
-  returnToMainPage = new Widget(1000, 75, 230, 40,
-    "return to the main page", color(50, 150, 0), stdFont, EVENT_BACKWARD);
+  showByDate=new Widget(1000, 75, 100, 40, 5,
+    "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
+  returnToMainPage = new Widget(1000, 75, 250, 40, 5,
+    "return to the main page", color(185, 168, 238), stdFont, EVENT_BACKWARD);
   focus=null;
   screen1 = new Screen(color(255));
-  screen2 = new Screen(color(100));
+  screen2 = new Screen(color(255));
   currentScreen = screen1;
 
   screen1.add(date1);
@@ -70,21 +70,22 @@ void setup() {
 }
 void draw() {
   currentScreen.draw();
-  switch(current_query) {
-  case 1:
-    text("Enter a date from 1 to 31:", 100, 100);
-    text("to", 470, 100);
-    text("January 2022", 580, 100);
+  //switch(current_query) {
+  //case 1:
+    
     //render_query1(results);
-    break;
+   // break;
     //case 2:
     // println("Pick a city");
     //render_query2(results);
     // break;
-  }
+ // }
   widgetList = new ArrayList();
   if(currentScreen == screen1)
   {
+    text("Enter a date from 1 to 31:", 100, 100);
+    text("to", 470, 100);
+    text("January 2022", 580, 100);
     widgetList.add(date1);
     widgetList.add(date2);
     widgetList.add(showByDate);
