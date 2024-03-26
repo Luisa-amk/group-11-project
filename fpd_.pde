@@ -5,14 +5,17 @@ import java.util.Map;
 
 
 FlightSchedule flightSchedule;
-int low = 1;
-int high = 31;
+int low = 1;                        //change according to userinput 
+int high = 31;                      //change according to userinput 
 
 void setup() {
   size(1000, 500);
   flightSchedule = new FlightSchedule();
   readData("flights-fullmonth");
-  printFlightsPerDay();
+  //printFlightsPerDay();
+  printFlightsForAirport();
+
+ 
 }
 
 void draw() {
@@ -69,6 +72,13 @@ void processData(String[] lines) {
       int day = Integer.parseInt(dateParts[1]);
       String city = processedParts.get(4);
       flightSchedule.addFlight(day, city);
+      
+      String airport = processedParts.get(7);
+      if(airport.equalsIgnoreCase("LAX")){        //hard coded 'LAX'- will have to be swapped with userinput variable 
+        flightSchedule.addAirportFlights(day, city);
+      }
+      
+      
     }
     //for (String processedPart : processedParts) {          //uncomment if you need to check array contents 
     //  println(processedParts + "\n");
@@ -83,7 +93,17 @@ void printFlightsPerDay() {
     println("Number of flights on " + date + ": " + numFlights);
   }
 }
+void printFlightsForAirport(){
+  for (int i = low; i <= high; i++) {
+    String airport = "LAX";            // will change according to user input 
+    String date = String.format("01/%02d/2022", i);
+    int numFlights = flightSchedule.countFLightsToAirport(i);
+    println("Number of flights from "+ airport+ " on " + date + ": " + numFlights);
+    
+  }
+}
 
-void drawGraph() {
+void drawAirportGraph() {
   
 }
+
