@@ -1,7 +1,0 @@
-class Flight {
-  private String city;
-
-  public Flight(String city) {
-    this.city = city;
-  }
-} // only contains a the city for now 
