@@ -35,7 +35,7 @@ void setup() {
   date1=new TextWidget(400, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
   date2=new TextWidget(500, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
   showByDate=new Widget(1000, 75, 100, 40, 5, "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
-  returnToHomePage = new Widget(1000, 75, 250, 40, 5, 
+  returnToHomePage = new Widget(990, 720, 250, 40, 5, 
     "return to the home page", color(185, 168, 238), stdFont, EVENT_HOME);
   query1 = new Widget(550, 150, 100, 40, 5, "query 1", color(185, 168, 238), stdFont, QUERY_1);
   query2 = new Widget(550, 250, 100, 40, 5, "query 2", color(185, 168, 238), stdFont, QUERY_2);
@@ -53,6 +53,7 @@ void setup() {
   dateInputScreen.add(date1);
   dateInputScreen.add(date2);
   dateInputScreen.add(showByDate);
+  dateInputScreen.add(returnToHomePage);
   dateBarChart.add(returnToHomePage);
 
   fullScreen();
@@ -89,6 +90,7 @@ void draw() {
     widgetList.add(date1);
     widgetList.add(date2);
     widgetList.add(showByDate);
+    widgetList.add(returnToHomePage);
   }
   else if (currentScreen == dateBarChart)
   {
