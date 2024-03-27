@@ -27,7 +27,7 @@ int dateLow = 0;
 int dateHigh = 0;
 TextWidget date1, date2;
 Widget showByDate, returnToHomePage, query1, query2, query3;
-boolean invalidInput = false;
+boolean invalidInput;
 
 void setup() {
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
@@ -41,6 +41,7 @@ void setup() {
   query2 = new Widget(550, 250, 100, 40, 5, "query 2", color(185, 168, 238), stdFont, QUERY_2);
   query3 = new Widget(550, 350, 100, 40, 5, "query 3", color(185, 168, 238), stdFont, QUERY_3);
   focus=null;
+  invalidInput = false;
   homePage = new Screen(color(255));
   dateInputScreen = new Screen(color(255));
   dateBarChart = new Screen(color(255));
@@ -122,7 +123,8 @@ void mousePressed()
       return;
     case EVENT_FORWARD:
       println("forward");
-      if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31)
+      if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31 
+          || dateLow > dateHigh || dateHigh < dateLow)
       {
         println("invalid input");
         invalidInput = true;
