@@ -42,9 +42,11 @@ void setup() {
   query3 = new Widget(550, 350, 100, 40, 5, "query 3", color(185, 168, 238), stdFont, QUERY_3);
   focus=null;
   invalidInput = false;
-  homePage = new Screen(color(255));
-  dateInputScreen = new Screen(color(255));
-  dateBarChart = new Screen(color(255));
+  homePage = new Screen();
+  dateInputScreen = new Screen();
+  dateBarChart = new Screen();
+  // make 2 new screens for query 2 and 3
+
   currentScreen = homePage;
 
   homePage.add(query1);
@@ -60,14 +62,14 @@ void setup() {
   fullScreen();
   readData();
 
-  for (DataPoint dp : dataPoints )
-  {
-    println(dp.flDate + " " + dp.mktCarrier + " " + dp. mktCarrierFlNum + " " + dp.origin + " " + dp.originCityName + " " + dp.originStateInit + " " +
-      dp.originStateAbr + " " + dp.originWac + " " + dp.dest + " " + dp.destCityName +  " " + dp.destCityInit + " " +  dp.destStateAbr + " " + dp.destWac +
-      dp.crsDepTime + " " + dp.depTime + " " + dp.crsArrTime + " " + dp.arrTime + " " +  dp.cancelled + " " + dp.diverted + " " + dp.distance );
+  //for (DataPoint dp : dataPoints )
+  //{
+  //  println(dp.flDate + " " + dp.mktCarrier + " " + dp. mktCarrierFlNum + " " + dp.origin + " " + dp.originCityName + " " + dp.originStateInit + " " +
+  //    dp.originStateAbr + " " + dp.originWac + " " + dp.dest + " " + dp.destCityName +  " " + dp.destCityInit + " " +  dp.destStateAbr + " " + dp.destWac +
+  //    dp.crsDepTime + " " + dp.depTime + " " + dp.crsArrTime + " " + dp.arrTime + " " +  dp.cancelled + " " + dp.diverted + " " + dp.distance );
 
-    println(dp);
-  }
+  //  println(dp);
+  //} 
 }
 void draw() {
   currentScreen.draw();
@@ -112,10 +114,10 @@ void mousePressed()
       currentScreen = dateInputScreen;
       break;
     case QUERY_2:
-      currentScreen = dateInputScreen;
+      currentScreen = dateInputScreen; // switch to new screen for total flights from LAX
       break;
     case QUERY_3:
-      currentScreen = dateInputScreen;
+      currentScreen = dateInputScreen; // switch to new screen for total cancelled flights
       break;
     case TEXT_WIDGET:
       println("clicked a text widget");

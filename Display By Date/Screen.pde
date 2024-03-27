@@ -1,9 +1,8 @@
 class Screen {
   ArrayList screenWidgets;
-  color screenColor;
-  Screen(color screenColor) {
+  color screenColor = color(255);
+  Screen() {
     screenWidgets=new ArrayList();
-    this.screenColor=screenColor;
   }
   void add(Widget w) {
     screenWidgets.add(w);
