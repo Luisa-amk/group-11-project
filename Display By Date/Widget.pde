@@ -25,7 +25,8 @@ class Widget {
     strokeWeight(2);
     rect(x, y, width, height, cornerRadius);
     fill(labelColor);
-    text(label, x+10, y+height-10);
+    textAlign(CENTER, CENTER);
+    text(label, x + width/2, y + height/2);
   }
   void mouseOver() {
     lineColor = color(255);

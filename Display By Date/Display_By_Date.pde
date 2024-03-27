@@ -1,17 +1,19 @@
 String[] flights;
 String[] lines;
 import java.util.ArrayList;
-final int QUERY_1 = 1;
-final int QUERY_2 = 2;
-final int QUERY_3 = 3;
 ArrayList<DataPoint> dataPoints;
 
 // variables for button widget
+final int SCREENX = 1280;
+final int SCREENY = 700;
 PFont stdFont;
 ArrayList widgetList;
-static final int TEXT_WIDGET=4;
-static final int EVENT_NULL=0;
-static final int EVENT_FORWARD = 5;
+static final int EVENT_NULL = 0;
+final int QUERY_1 = 1;
+final int QUERY_2 = 2;
+final int QUERY_3 = 3;
+static final int TEXT_WIDGET = 4;
+static final int EVENT_DATECHART = 5;
 static final int EVENT_HOME = 6;
 Screen currentScreen, dateInputScreen, dateBarChart, homePage;
 TextWidget date1, date2, focus;
@@ -21,19 +23,22 @@ int dateHigh = 0;
 boolean invalidInput;
 color purple = color(185, 168, 238);
 
+void settings()
+{
+  size(SCREENX, SCREENY);
+}
 void setup() {
-  fullScreen();
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
   date1=new TextWidget(400, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
   date2=new TextWidget(500, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
-  showByDate=new Widget(1000, 75, 100, 40, 5, "display", purple, stdFont, EVENT_FORWARD);
-  returnToHomePage = new Widget(990, 720, 270, 40, 5, 
+  showByDate=new Widget(100, 150, 100, 40, 5, "display", purple, stdFont, EVENT_DATECHART);
+  returnToHomePage = new Widget(990, 10, 270, 40, 5, 
     "return to the home page", color(185, 168, 238), stdFont, EVENT_HOME);
-  query1 = new Widget(550, 150, 100, 40, 5, "query 1", purple, stdFont, QUERY_1);
-  query2 = new Widget(550, 250, 100, 40, 5, "query 2", purple, stdFont, QUERY_2);
-  query3 = new Widget(550, 350, 100, 40, 5, "query 3", purple, stdFont, QUERY_3);
-  focus=null;
+  query1 = new Widget(SCREENX/2 - 50, 150, 100, 40, 5, "query 1", purple, stdFont, QUERY_1);
+  query2 = new Widget(SCREENX/2 - 50 , 250, 100, 40, 5, "query 2", purple, stdFont, QUERY_2);
+  query3 = new Widget(SCREENX/2 - 50, 350, 100, 40, 5, "query 3", purple, stdFont, QUERY_3);
+  focus = null;
   invalidInput = false;
   homePage = new Screen();
   dateInputScreen = new Screen();
@@ -53,22 +58,18 @@ void setup() {
   dateBarChart.add(returnToHomePage);
 
   readData();
-
-  //for (DataPoint dp : dataPoints )
-  //{
-  //  println(dp.flDate + " " + dp.mktCarrier + " " + dp. mktCarrierFlNum + " " + dp.origin + " " + dp.originCityName + " " + dp.originStateInit + " " +
-  //    dp.originStateAbr + " " + dp.originWac + " " + dp.dest + " " + dp.destCityName +  " " + dp.destCityInit + " " +  dp.destStateAbr + " " + dp.destWac +
-  //    dp.crsDepTime + " " + dp.depTime + " " + dp.crsArrTime + " " + dp.arrTime + " " +  dp.cancelled + " " + dp.diverted + " " + dp.distance );
-
-  //  println(dp);
-  //} 
 }
 void draw() {
   currentScreen.draw();
+  textFont(stdFont);
+  textAlign(LEFT, BASELINE);
+  textSize(20);
 
   widgetList = new ArrayList();
   if(currentScreen == homePage)
   {
+    textAlign(CENTER, CENTER);
+    text("HOME", SCREENX/2, 75);
     widgetList.add(query1);
     widgetList.add(query2);
     widgetList.add(query3);
@@ -80,7 +81,7 @@ void draw() {
     text("January 2022", 580, 100);
     if(invalidInput)
     {
-      text("Invalid Input", 990, 150);
+      text("Invalid Input", 250, 175);
     }
     widgetList.add(date1);
     widgetList.add(date2);
@@ -116,7 +117,7 @@ void mousePressed()
       println("clicked a text widget");
       focus = (TextWidget) theWidget;
       return;
-    case EVENT_FORWARD:
+    case EVENT_DATECHART:
       println("forward");
       if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31 
           || dateLow > dateHigh || dateHigh < dateLow)
