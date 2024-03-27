@@ -14,6 +14,7 @@ class Screen {
       Widget aWidget = (Widget)screenWidgets.get(i);
       aWidget.draw();
     }
+    
   }
   int getEvent(int mx, int my) {
     for (int i = 0; i<screenWidgets.size(); i++) {
@@ -29,4 +30,6 @@ class Screen {
   {
     return screenWidgets;
   }
+
+
 }
