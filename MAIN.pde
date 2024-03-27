@@ -1,73 +1,329 @@
-String[] flights; 
-String[] lines;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+String[] flights;
+String[] lines;
 int result;
-int default_query;
-int current_query;
-int query1 = 1;
-int query2 = 2;
-int query3 = 3;
-boolean cancelled;
-ArrayList<DataPoint> dataPoints;
-int numDataPoints = 18;
-String cancelledTime = "5";
-//String cancArrTime  "0000";
+final int QUERY_1 = 1;
+final int QUERY_2 = 2;
+final int QUERY_3 = 3;
+
+
+
+// variables for button widget
+PFont stdFont;
+ArrayList widgetList;
+TextWidget focus;
+static final int TEXT_WIDGET=4;
+static final int EVENT_NULL=0;
+static final int EVENT_FORWARD = 5;
+static final int EVENT_HOME = 6;
+Screen currentScreen, dateInputScreen, dateBarChart, homePage, dateInputScreen3,cancelBarChart;
+int dateLow = 0;
+int dateHigh = 0;
+TextWidget date1, date2;
+Widget showByDate, returnToHomePage, query1, query2, query3;
+boolean invalidInput;
+FlightSchedule flightSchedule;
+int[] flightDates = new int[(dateHigh-dateLow)+1];
 
 void setup() {
-  readData();
-  result = default_query;        //result = default_query();
-  current_query = query3;        //current_query = query3;// whatever type of query is default
   
-   for(DataPoint dp : dataPoints )
-   {
-     
-      println(dp.flDate + " " + dp.mktCarrier + " " + dp. mktCarrierFlNum + " " + dp.origin + " " + dp.originCityName + " " + dp.originStateInit + " " +
-    dp.originStateAbr + " " + dp.originWac + " " + dp.dest + " " + dp.destCityName +  " " + dp.destCityInit + " " +  dp.destStateAbr + " " + dp.destWac +
-    dp.crsDepTime + " " + dp.depTime + " " + dp.crsArrTime + " " + dp.arrTime + " " +  dp.cancelled + " " + dp.diverted + " " + dp.distance );
-    
-     println(dp); 
-   }
+  stdFont=loadFont("AgencyFB-Bold-17.vlw");
+  textFont(stdFont);
+  date1=new TextWidget(400, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
+  date2=new TextWidget(500, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
+  showByDate=new Widget(1000, 75, 100, 40, 5, "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
+  returnToHomePage = new Widget(990, 600, 250, 40, 5, 
+    "return to the home page", color(185, 168, 238), stdFont, EVENT_HOME);
+  query1 = new Widget(550, 150, 100, 40, 5, "query 1", color(185, 168, 238), stdFont, QUERY_1);
+  query2 = new Widget(550, 250, 100, 40, 5, "query 2", color(185, 168, 238), stdFont, QUERY_2);
+  query3 = new Widget(550, 350, 100, 40, 5, "query 3", color(185, 168, 238), stdFont, QUERY_3);
+  focus=null;
+  invalidInput = false;
+  homePage = new Screen(color(255));
+  dateInputScreen = new Screen(color(255));
+  dateInputScreen3 = new Screen(color(255));
+  dateBarChart = new Screen(color(255));
+  cancelBarChart = new Screen(color(255));
 
+
+  currentScreen = homePage;
+
+  homePage.add(query1);
+  homePage.add(query2);
+  homePage.add(query3);
+
+  dateInputScreen.add(date1);
+  dateInputScreen.add(date2);
+  dateInputScreen.add(showByDate);
+  dateInputScreen.add(returnToHomePage);
+  dateBarChart.add(returnToHomePage);
+
+  dateInputScreen3.add(date1);
+  dateInputScreen3.add(date2);
+  dateInputScreen3.add(showByDate);
+  dateInputScreen3.add(returnToHomePage);
+  cancelBarChart.add(returnToHomePage);
+
+  size(1280,700);
+  flightSchedule = new FlightSchedule();
+  readData("flights-fullmonth.csv");
+   //printFlightsPerDay();
+  //printFlightsForAirport();
+
+  
 }
+
 void draw() {
-//switch(current_query){
-//case query1:
-//   //render_query1(results);
-//   break;
-//case query2:
-//   //render_query2(results);
-//   break;
-//}
-////render_controls();
+  currentScreen.draw();
+  //draw airport graph in new screen for query 2 
+   drawAirportGraph(flightSchedule);
+ 
+    textFont(stdFont); // Set the font before drawing text
+    textAlign(LEFT, BASELINE); // Set text alignment
+    textSize(18); // 
+    
+  widgetList = new ArrayList();
+  if(currentScreen == homePage)
+  {
+    
+    fill(255);
+    rect(540,70, 120, 60);
+    textSize(30);
+    fill(0);
+    text("HOME",565,110);
+    widgetList.add(query1);
+    widgetList.add(query2);
+    widgetList.add(query3);
+  }
+  if(currentScreen == dateInputScreen)
+  {
+    text("Enter a date from 1 to 31:", 100, 100);
+    text("to", 470, 100);
+    text("January 2022", 580, 100);
+    if(invalidInput)
+    {
+      text("Invalid Input", 990, 150);
+    }
+    widgetList.add(date1);
+    widgetList.add(date2);             
+    widgetList.add(showByDate);        
+    widgetList.add(returnToHomePage);
+  }
+  else if (currentScreen == dateBarChart)
+  {
+    drawBarChart();
+    widgetList.add(returnToHomePage);
+  }
+  for (int i = 0; i < widgetList.size(); i++) {
+    ((Widget)widgetList.get(i)).draw();              //depedning on screen widgets get printed. 
+  }
 }
 void mousePressed()
-{
-////Work out which button pressed
-//switch(event)
-//{
-//case button1:
-//   current_query = query1;
-//   results=query1();
-//   break;
-//case button2:
-//   current_query = query2;
-//   results=query2();
-//   break;
-//}
+{ 
+  int event;
+  for (int i = 0; i < widgetList.size(); i++) {
+    Widget theWidget = (Widget)widgetList.get(i);
+    event = theWidget.getEvent(mouseX, mouseY);
+    switch(event) {
+    case QUERY_1:
+      currentScreen = dateInputScreen;
+      break;
+    case QUERY_2:
+      currentScreen = dateInputScreen;
+      break;
+    case QUERY_3:
+      currentScreen = dateInputScreen;
+      break;
+    case TEXT_WIDGET:
+      println("clicked a text widget");
+      focus = (TextWidget) theWidget;
+      return;
+    case EVENT_FORWARD:
+      println("forward");
+      if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31 
+          || dateLow > dateHigh || dateHigh < dateLow)
+      {
+        println("invalid input");
+        invalidInput = true;
+      }
+      else 
+      {
+        currentScreen = dateBarChart;
+        printFlightsPerDay();
+        printCancelledFlight();
+        invalidInput = false;
+        
+      }
+      focus = null;
+      break;
+    case EVENT_HOME:
+      println("home");
+      currentScreen = homePage;
+      focus = null;
+      break;
+    }
+  }
+}
+void mouseMoved() {
+  int event;
+  ArrayList widgetList = currentScreen.getWidgets();
+  for (int i = 0; i<widgetList.size(); i++) {
+    Widget aWidget = (Widget) widgetList.get(i);
+    event = aWidget.getEvent(mouseX, mouseY);
+    if (event != EVENT_NULL) {
+      aWidget.mouseOver();
+    } else
+      aWidget.mouseNotOver();
+  }
 }
 
-void readData(){
-  String[] lines = loadStrings("flights2k.csv"); 
-  
-  dataPoints = new ArrayList<DataPoint>();
-  
-  // Parse each line and create DataPoint objects
-  for (int i = 1; i < lines.length; i++) {
-    
-    String[] parts = split(lines[i], ","); 
-    DataPoint dp = new DataPoint(parts);  // problem is the parts array -> need to change the parts 
-    dataPoints.add(dp);
-    
-   
+void keyPressed() {
+  if (focus != null) {
+    focus.append(key);
   }
+  if(Character.isDigit(key))
+  {
+    int keyValue = Character.getNumericValue(key);
+    if(focus == date1)
+    {
+      if(dateLow == 0)
+      {
+        dateLow = keyValue;
+      }
+      else
+      {
+        dateLow = dateLow*10 + keyValue;
+      }
+    }
+    else if (focus == date2)
+    {
+      if(dateHigh == 0)
+      {
+        dateHigh = keyValue;
+      }
+      else if(key == BACKSPACE)
+      {
+        dateHigh = dateHigh / 10;
+      }
+      else
+      {
+        dateHigh = dateHigh*10 + keyValue;
+      }
+    }
+  }
+  else if(key == BACKSPACE)
+  {
+    if (focus == date1) 
+    {
+      dateLow = dateLow / 10; // Remove last digit
+    } 
+    else if (focus == date2) 
+    {
+      dateHigh = dateHigh / 10; // Remove last digit
+    }   
+  }
+  println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
+  
+}
+
+
+void readData(String fileName) {
+  String[] lines = loadStrings(fileName);
+  if (lines != null) {
+    processData(lines);
+  }
+}
+
+void processData(String[] lines) {
+  boolean firstLine = true;
+  for (String line : lines) {
+    if(firstLine){
+      firstLine = false; 
+      continue;
+    }
+    
+    String[] parts = line.split(",");
+    
+    ArrayList<String> processedParts = new ArrayList<String>();
+    String jointPart = "";
+    boolean withinQuotes = false;
+    
+    for (String part : parts) {
+      if (part.contains(" ") && !part.contains("\"")) {    
+        part = part.split(" ")[0];
+      }
+      if (part.startsWith("\"")) {
+        withinQuotes = true;
+        jointPart = part;
+      } 
+      else if (withinQuotes) {
+        jointPart +=  part;
+        if (part.endsWith("\"")) {
+          withinQuotes = false;
+          processedParts.add(jointPart.replaceAll("\"", ""));
+        }
+      } 
+      else {
+        if (part.isEmpty()) {
+          part = "-1";
+        }
+        processedParts.add(part);
+      }
+    }
+    if (processedParts.size() >= 18) {
+      String date = processedParts.get(0);
+      String[] dateParts = date.split("/");
+      int day = Integer.parseInt(dateParts[1]);
+      String city = processedParts.get(4);
+      flightSchedule.addFlight(day, city);
+      
+      String cancelled = processedParts.get(15);
+       if (cancelled.equals("1.00")) {
+       flightSchedule.addCancelledFlight(day, cancelled);
+      }
+
+      
+      String airport = processedParts.get(7);
+      if(airport.equalsIgnoreCase("LAX")){        //hard coded 'LAX'- will have to be swapped with userinput variable 
+        flightSchedule.addAirportFlights(day, city);
+      }
+      
+      
+    }
+   // for (String processedPart : processedParts) {          //uncomment if you need to check array contents 
+     // println(processedParts + "\n");
+   // }
+  }
+}
+void printFlightsPerDay() {
+  
+  for (int i = dateLow; i <= dateHigh; i++) {
+    String date = String.format("01/%02d/2022", i);
+    int numFlights = flightSchedule.countFlightsForDate(i);
+    println("Number of flights on " + date + ": " + numFlights);
+  }
+  
+}
+void printFlightsForAirport(){
+  for (int i = dateLow; i <= dateHigh; i++) {
+    String airport = "LAX";            // will change according to user input 
+    String date = String.format("01/%02d/2022", i);
+    int numFlights = flightSchedule.countFLightsToAirport(i);
+    println("Number of flights from "+ airport+ " on " + date + ": " + numFlights);
+    
+  }
+}
+
+void printCancelledFlight() {
+  
+  for (int i = dateLow; i <= dateHigh; i++) {
+    String date = String.format("01/%02d/2022", i);
+    int c = flightSchedule.countCancelledFlight(i);
+    println("Number of cancelled flights on " + date + ": " + c);
+  }
+  
 }
