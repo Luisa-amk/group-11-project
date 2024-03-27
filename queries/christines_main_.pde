@@ -1,17 +1,16 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 String[] flights;
 String[] lines;
-import java.util.ArrayList;
 int result;
 final int QUERY_1 = 1;
 final int QUERY_2 = 2;
 final int QUERY_3 = 3;
-int default_query;
-int current_query;
-boolean cancelled;
-ArrayList<DataPoint> dataPoints;
-int numDataPoints = 18;
-String cancelledTime = "5";
-//String cancArrTime  "0000";
+
+
 
 // variables for button widget
 PFont stdFont;
@@ -19,7 +18,6 @@ ArrayList widgetList;
 TextWidget focus;
 static final int TEXT_WIDGET=4;
 static final int EVENT_NULL=0;
-static final int EVENT_TEXT = 4;
 static final int EVENT_FORWARD = 5;
 static final int EVENT_HOME = 6;
 Screen currentScreen, dateInputScreen, dateBarChart, homePage;
@@ -28,14 +26,17 @@ int dateHigh = 0;
 TextWidget date1, date2;
 Widget showByDate, returnToHomePage, query1, query2, query3;
 boolean invalidInput;
+FlightSchedule flightSchedule;
+int[] flightDates = new int[(dateHigh-dateLow)+1];
 
 void setup() {
-  stdFont=loadFont("Ayuthaya-20.vlw");
+  
+  stdFont=loadFont("AndaleMono-17.vlw");
   textFont(stdFont);
   date1=new TextWidget(400, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
   date2=new TextWidget(500, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
   showByDate=new Widget(1000, 75, 100, 40, 5, "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
-  returnToHomePage = new Widget(990, 720, 250, 40, 5, 
+  returnToHomePage = new Widget(990, 600, 250, 40, 5, 
     "return to the home page", color(185, 168, 238), stdFont, EVENT_HOME);
   query1 = new Widget(550, 150, 100, 40, 5, "query 1", color(185, 168, 238), stdFont, QUERY_1);
   query2 = new Widget(550, 250, 100, 40, 5, "query 2", color(185, 168, 238), stdFont, QUERY_2);
@@ -57,24 +58,32 @@ void setup() {
   dateInputScreen.add(returnToHomePage);
   dateBarChart.add(returnToHomePage);
 
-  fullScreen();
-  readData();
+  size(1280,700);
+  flightSchedule = new FlightSchedule();
+  readData("flights-fullmonth");
+   //printFlightsPerDay();
+  //printFlightsForAirport();
 
-  //for (DataPoint dp : dataPoints )
-  //{
-  //  println(dp.flDate + " " + dp.mktCarrier + " " + dp. mktCarrierFlNum + " " + dp.origin + " " + dp.originCityName + " " + dp.originStateInit + " " +
-  //    dp.originStateAbr + " " + dp.originWac + " " + dp.dest + " " + dp.destCityName +  " " + dp.destCityInit + " " +  dp.destStateAbr + " " + dp.destWac +
-  //    dp.crsDepTime + " " + dp.depTime + " " + dp.crsArrTime + " " + dp.arrTime + " " +  dp.cancelled + " " + dp.diverted + " " + dp.distance );
-
-  //  println(dp);
-  //}
+  
 }
 void draw() {
   currentScreen.draw();
-
+  //draw airport graph in new screen for query 2 
+   drawAirportGraph(flightSchedule);
+ 
+    textFont(stdFont); // Set the font before drawing text
+    textAlign(LEFT, BASELINE); // Set text alignment
+    textSize(18); // 
+    
   widgetList = new ArrayList();
   if(currentScreen == homePage)
   {
+    
+    fill(255);
+    rect(540,70, 120, 60);
+    textSize(30);
+    fill(0);
+    text("HOME",565,110);
     widgetList.add(query1);
     widgetList.add(query2);
     widgetList.add(query3);
@@ -89,16 +98,17 @@ void draw() {
       text("Invalid Input", 990, 150);
     }
     widgetList.add(date1);
-    widgetList.add(date2);
-    widgetList.add(showByDate);
+    widgetList.add(date2);             
+    widgetList.add(showByDate);        
     widgetList.add(returnToHomePage);
   }
   else if (currentScreen == dateBarChart)
   {
+    drawBarChart();
     widgetList.add(returnToHomePage);
   }
   for (int i = 0; i < widgetList.size(); i++) {
-    ((Widget)widgetList.get(i)).draw();
+    ((Widget)widgetList.get(i)).draw();              //depedning on screen widgets get printed. 
   }
 }
 void mousePressed()
@@ -129,10 +139,12 @@ void mousePressed()
         println("invalid input");
         invalidInput = true;
       }
-      else
+      else 
       {
         currentScreen = dateBarChart;
+        printFlightsPerDay();
         invalidInput = false;
+        
       }
       focus = null;
       break;
@@ -203,18 +215,135 @@ void keyPressed() {
     }   
   }
   println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
+  
 }
 
-void readData() {
-  String[] lines = loadStrings("flights2k");
 
-  dataPoints = new ArrayList<DataPoint>();
+void readData(String fileName) {
+  String[] lines = loadStrings(fileName);
+  if (lines != null) {
+    processData(lines);
+  }
+}
 
-  // Parse each line and create DataPoint objects
-  for (int i = 1; i < lines.length; i++) {
+void processData(String[] lines) {
+  boolean firstLine = true;
+  for (String line : lines) {
+    if(firstLine){
+      firstLine = false; 
+      continue;
+    }
+    
+    String[] parts = line.split(",");
+    
+    ArrayList<String> processedParts = new ArrayList<String>();
+    String jointPart = "";
+    boolean withinQuotes = false;
+    
+    for (String part : parts) {
+      if (part.contains(" ") && !part.contains("\"")) {    
+        part = part.split(" ")[0];
+      }
+      if (part.startsWith("\"")) {
+        withinQuotes = true;
+        jointPart = part;
+      } 
+      else if (withinQuotes) {
+        jointPart +=  part;
+        if (part.endsWith("\"")) {
+          withinQuotes = false;
+          processedParts.add(jointPart.replaceAll("\"", ""));
+        }
+      } 
+      else {
+        if (part.isEmpty()) {
+          part = "-1";
+        }
+        processedParts.add(part);
+      }
+    }
+    if (processedParts.size() >= 18) {
+      String date = processedParts.get(0);
+      String[] dateParts = date.split("/");
+      int day = Integer.parseInt(dateParts[1]);
+      String city = processedParts.get(4);
+      flightSchedule.addFlight(day, city);
+      
+      String airport = processedParts.get(7);
+      if(airport.equalsIgnoreCase("LAX")){        //hard coded 'LAX'- will have to be swapped with userinput variable 
+        flightSchedule.addAirportFlights(day, city);
+      }
+      
+      
+    }
+    //for (String processedPart : processedParts) {          //uncomment if you need to check array contents 
+    //  println(processedParts + "\n");
+    //}
+  }
+}
+void printFlightsPerDay() {
+  
+  for (int i = dateLow; i <= dateHigh; i++) {
+    String date = String.format("01/%02d/2022", i);
+    int numFlights = flightSchedule.countFlightsForDate(i);
+    println("Number of flights on " + date + ": " + numFlights);
+  }
+  
+}
+void printFlightsForAirport(){
+  for (int i = dateLow; i <= dateHigh; i++) {
+    String airport = "LAX";            // will change according to user input 
+    String date = String.format("01/%02d/2022", i);
+    int numFlights = flightSchedule.countFLightsToAirport(i);
+    println("Number of flights from "+ airport+ " on " + date + ": " + numFlights);
+    
+  }
+}
 
-    String[] parts = split(lines[i], ",");
-    DataPoint dp = new DataPoint(parts);  // problem is the parts array -> need to change the parts
-    dataPoints.add(dp);
+void drawBarChart() {
+  println("drawing bar chart");
+  int xpos = 65; 
+  
+  fill(0);
+  textAlign(CENTER);
+  text("Day of the Month", (width / 2), height - 5);
+  
+  
+  textAlign(CENTER);
+  pushMatrix();      //function saves coordinated 
+  translate(25, height / 2);
+  rotate(-HALF_PI);
+  text("Number of Flights", 0, 0);
+  popMatrix();      //restores coordinates 
+  
+ 
+  for (int day = dateLow; day <= dateHigh; day++) {
+    // Count the flights for the current date
+    int flightsForDate = flightSchedule.countFlightsForDate(day);
+    
+    
+    int barWidth = 20; 
+    int maxBarHeight = 400; 
+    
+    
+    int barHeight = (int) map(flightsForDate, 0, 18000, 0, maxBarHeight);
+    
+    // Draw the bar
+    fill(206, 212, 247);
+    rect(xpos, height - barHeight - 30-20, barWidth, barHeight);
+    
+   
+    fill(0);
+    PFont labelFont = loadFont("AndaleMono-10.vlw");    // change font 
+    textFont(labelFont);
+    textAlign(CENTER);
+    text(Integer.toString(day), xpos + 10, height - 10-20);
+    
+    fill(0);
+    textAlign(CENTER);
+    textSize(9);
+    text(Integer.toString(flightsForDate), xpos + 10, height - barHeight - 40 - 20);
+   
+    xpos += 30;
   }
 }
