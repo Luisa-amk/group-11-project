@@ -1,3 +1,4 @@
+
 class TextWidget extends Widget {
   int maxlen;
   TextWidget(int x, int y, int width, int height, int cornerRadius,
@@ -16,6 +17,7 @@ class TextWidget extends Widget {
     this.maxlen=maxlen;
   }
   void append(char s) {
+    
     if (s==BACKSPACE) 
     {
       if (!label.equals(""))
