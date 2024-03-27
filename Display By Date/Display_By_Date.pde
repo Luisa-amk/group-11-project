@@ -1,45 +1,38 @@
 String[] flights;
 String[] lines;
 import java.util.ArrayList;
-int result;
 final int QUERY_1 = 1;
 final int QUERY_2 = 2;
 final int QUERY_3 = 3;
-int default_query;
-int current_query;
-boolean cancelled;
 ArrayList<DataPoint> dataPoints;
-int numDataPoints = 18;
-String cancelledTime = "5";
-//String cancArrTime  "0000";
 
 // variables for button widget
 PFont stdFont;
 ArrayList widgetList;
-TextWidget focus;
 static final int TEXT_WIDGET=4;
 static final int EVENT_NULL=0;
-static final int EVENT_TEXT = 4;
 static final int EVENT_FORWARD = 5;
 static final int EVENT_HOME = 6;
 Screen currentScreen, dateInputScreen, dateBarChart, homePage;
+TextWidget date1, date2, focus;
+Widget showByDate, returnToHomePage, query1, query2, query3;
 int dateLow = 0;
 int dateHigh = 0;
-TextWidget date1, date2;
-Widget showByDate, returnToHomePage, query1, query2, query3;
 boolean invalidInput;
+color purple = color(185, 168, 238);
 
 void setup() {
+  fullScreen();
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
-  date1=new TextWidget(400, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
-  date2=new TextWidget(500, 75, 50, 40, 5, "", color(185, 168, 238), stdFont, TEXT_WIDGET, 10);
-  showByDate=new Widget(1000, 75, 100, 40, 5, "display", color(185, 168, 238), stdFont, EVENT_FORWARD);
-  returnToHomePage = new Widget(990, 720, 250, 40, 5, 
+  date1=new TextWidget(400, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  date2=new TextWidget(500, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  showByDate=new Widget(1000, 75, 100, 40, 5, "display", purple, stdFont, EVENT_FORWARD);
+  returnToHomePage = new Widget(990, 720, 270, 40, 5, 
     "return to the home page", color(185, 168, 238), stdFont, EVENT_HOME);
-  query1 = new Widget(550, 150, 100, 40, 5, "query 1", color(185, 168, 238), stdFont, QUERY_1);
-  query2 = new Widget(550, 250, 100, 40, 5, "query 2", color(185, 168, 238), stdFont, QUERY_2);
-  query3 = new Widget(550, 350, 100, 40, 5, "query 3", color(185, 168, 238), stdFont, QUERY_3);
+  query1 = new Widget(550, 150, 100, 40, 5, "query 1", purple, stdFont, QUERY_1);
+  query2 = new Widget(550, 250, 100, 40, 5, "query 2", purple, stdFont, QUERY_2);
+  query3 = new Widget(550, 350, 100, 40, 5, "query 3", purple, stdFont, QUERY_3);
   focus=null;
   invalidInput = false;
   homePage = new Screen();
@@ -59,7 +52,6 @@ void setup() {
   dateInputScreen.add(returnToHomePage);
   dateBarChart.add(returnToHomePage);
 
-  fullScreen();
   readData();
 
   //for (DataPoint dp : dataPoints )
@@ -97,6 +89,7 @@ void draw() {
   }
   else if (currentScreen == dateBarChart)
   {
+    // add widget to the arraylist for that screen
     widgetList.add(returnToHomePage);
   }
   for (int i = 0; i < widgetList.size(); i++) {
