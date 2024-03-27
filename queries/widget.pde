@@ -20,12 +20,15 @@ class Widget {
     lineColor= color(0);
   }
   void draw() {
-    fill(widgetColor);
-    stroke(lineColor);
-    strokeWeight(2);
-    rect(x, y, width, height, cornerRadius);
-    fill(labelColor);
-    text(label, x+10, y+height-10);
+   fill(widgetColor);
+  stroke(lineColor);
+  strokeWeight(2);
+  rect(x, y, width, height, cornerRadius);
+  fill(labelColor);
+  //textSize(14); // Adjust text size as needed
+  textFont(widgetFont); // Set the font
+  textAlign(CENTER, CENTER); // Align text to the center of the widget
+  text(label, x + width / 2, y + height / 2); 
   }
   void mouseOver() {
     lineColor = color(255);
