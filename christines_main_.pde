@@ -17,9 +17,10 @@ final int QUERY_3 = 3;
 static final int TEXT_WIDGET = 4;
 static final int EVENT_DATECHART = 5;
 static final int EVENT_HOME = 6;
+static final int EVENT_CANCELCHART = 7;
 
 Screen currentScreen, dateInputScreen, dateBarChart, homePage, dateInputScreen3,cancelBarChart;
-Widget showByDate, returnToHomePage, query1, query2, query3;
+Widget showByDate,showCancel, returnToHomePage, query1, query2, query3;
 TextWidget date1, date2, focus;
 int dateLow = 0;
 int dateHigh = 0;
@@ -41,6 +42,7 @@ void setup() {
   date1=new TextWidget(400, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
   date2=new TextWidget(500, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
   showByDate=new Widget(100, 150, 100, 40, 5, "display", purple, stdFont, EVENT_DATECHART);
+  showCancel =new Widget(100, 150, 100, 40, 5, "display", purple, stdFont, EVENT_CANCELCHART);
   returnToHomePage = new Widget(990, 10, 250, 40, 5, 
     "return to the home page", purple, stdFont, EVENT_HOME);
   query1 = new Widget(SCREENX/2 - 50, 150, 100, 40, 5, "query 1", purple, stdFont, QUERY_1);
@@ -69,7 +71,7 @@ void setup() {
 
   dateInputScreen3.add(date1);
   dateInputScreen3.add(date2);
-  dateInputScreen3.add(showByDate);
+  dateInputScreen3.add(showCancel);
   dateInputScreen3.add(returnToHomePage);
   cancelBarChart.add(returnToHomePage);
 
@@ -120,9 +122,33 @@ void draw() {
     widgetList.add(showByDate);      
     widgetList.add(returnToHomePage);
   }
-  else if (currentScreen == dateBarChart)
+   else if (currentScreen == dateBarChart)
   {
     drawBarChart();
+    widgetList.add(returnToHomePage);
+  }
+  // add else-if statements to switch to add widgets on that screen to ArrayList of 
+  for (int i = 0; i < widgetList.size(); i++) {
+    ((Widget)widgetList.get(i)).draw();              //depending on screen widgets get printed. 
+  }
+
+if(currentScreen == dateInputScreen3)
+  {
+    text("Enter a date from 1 to 31:", 100, 100);
+    text("to", 470, 100);
+    text("January 2022", 580, 100);
+    if(invalidInput)
+    {
+      text("Invalid Input", 250, 175);
+    }
+    widgetList.add(date1);
+    widgetList.add(date2);             
+    widgetList.add(showCancel);      
+    widgetList.add(returnToHomePage);
+  }
+   else if (currentScreen == cancelBarChart)
+  {
+     drawCancelChart();
     widgetList.add(returnToHomePage);
   }
   // add else-if statements to switch to add widgets on that screen to ArrayList of 
@@ -163,7 +189,6 @@ void mousePressed()
       {
         currentScreen = dateBarChart;
         printFlightsPerDay();
-        printCancelledFlight();
         invalidInput = false;
         
       }
@@ -174,9 +199,29 @@ void mousePressed()
       currentScreen = homePage;
       focus = null;
       break;
-    }
+      
+    case EVENT_CANCELCHART:
+    println("forward cancel chart");
+      if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31 
+          || dateLow > dateHigh || dateHigh < dateLow)
+      {
+        println("invalid input");
+        invalidInput = true;
+      }
+      else 
+      {
+        currentScreen = cancelBarChart;
+        // printCancelledFlight();
+        invalidInput = false;
+        
+      }
+      focus = null;
+      break;
+
   }
 }
+}
+
 void mouseMoved() {
   int event;
   ArrayList widgetList = currentScreen.getWidgets();
@@ -307,6 +352,7 @@ void processData(String[] lines) {
    // }
   }
 }
+
 void printFlightsPerDay() {
   
   for (int i = dateLow; i <= dateHigh; i++) {
@@ -322,19 +368,19 @@ void printFlightsForAirport(){
     String date = String.format("01/%02d/2022", i);
     int numFlights = flightSchedule.countFLightsToAirport(i);
     println("Number of flights from "+ airport+ " on " + date + ": " + numFlights);
-    
   }
 }
+  
+   //void printCancelledFlight() {
+   //for (int i = dateLow; i <= dateHigh; i++) {
+    //String date = String.format("01/%02d/2022", i);
+    //int c = flightSchedule.countCancelledFlight(i);
+    //println("Number of cancelled flights on " + date + ": " + c);
+ // }   
+  //}
+//}
 
-void printCancelledFlight() {
-  
-  for (int i = dateLow; i <= dateHigh; i++) {
-    String date = String.format("01/%02d/2022", i);
-    int c = flightSchedule.countCancelledFlight(i);
-    println("Number of cancelled flights on " + date + ": " + c);
-  }
-  
-}
+
 
 void drawBarChart() {
   println("drawing bar chart");
