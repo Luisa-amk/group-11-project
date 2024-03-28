@@ -3,6 +3,9 @@ class Widget {
   String label;
   int event;
   color widgetColor, labelColor, lineColor;
+  color purpleHover = color(185, 168, 238, 100);
+  color blueGreenHover = color(194, 241, 244, 100);
+  color lightBlueHover = color(172, 194, 238, 100);
   PFont widgetFont;
   
   Widget(int x, int y, int width, int height, int cornerRadius, String label,
@@ -20,25 +23,45 @@ class Widget {
     lineColor= color(0);
   }
   void draw() {
-   fill(widgetColor);
+  fill(widgetColor);
   stroke(lineColor);
   strokeWeight(2);
   rect(x, y, width, height, cornerRadius);
   fill(labelColor);
-  //textSize(14); // Adjust text size as needed
+  textSize(17); // Adjust text size as needed
   textFont(widgetFont); // Set the font
   textAlign(CENTER, CENTER); // Align text to the center of the widget
   text(label, x + width / 2, y + height / 2); 
   }
   void mouseOver() {
     lineColor = color(255);
-    widgetColor = color(185, 168, 238, 100);
-    
+    if(widgetColor == purple)
+    {
+      widgetColor = purpleHover;
+    }
+    else if (widgetColor == bluegreen)
+    {
+      widgetColor = blueGreenHover;
+    }
+    else if (widgetColor == lightBlue)
+    {
+      widgetColor = lightBlueHover;
+    }    
   }
   void mouseNotOver() {
     lineColor = color(0);
-    widgetColor = color(185, 168, 238);
-    
+    if(widgetColor == purpleHover)
+    {
+      widgetColor = purple;
+    }
+    else if(widgetColor == blueGreenHover)
+    {
+      widgetColor = bluegreen;
+    } 
+    else if(widgetColor == lightBlueHover)
+    {
+      widgetColor = lightBlue;
+    }    
   }
   
   int getEvent(int mX, int mY) {
