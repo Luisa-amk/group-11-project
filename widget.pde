@@ -3,6 +3,8 @@ class Widget {
   String label;
   int event;
   color widgetColor, labelColor, lineColor;
+  color purpleHover = color(185, 168, 238, 100);
+  color blueGreenHover = color(194, 241, 244, 100);
   PFont widgetFont;
   
   Widget(int x, int y, int width, int height, int cornerRadius, String label,
@@ -29,11 +31,25 @@ class Widget {
   }
   void mouseOver() {
     lineColor = color(255);
-    widgetColor = color(185, 168, 238, 100);
+    if(widgetColor == purple)
+    {
+      widgetColor = purpleHover;
+    }
+    else if (widgetColor == bluegreen)
+    {
+      widgetColor = blueGreenHover;
+    }
   }
   void mouseNotOver() {
     lineColor = color(0);
-    widgetColor = color(185, 168, 238);
+    if(widgetColor == purpleHover)
+    {
+      widgetColor = purple;
+    }
+    else if (widgetColor == blueGreenHover)
+    {
+      widgetColor = bluegreen;
+    } 
   }
   int getEvent(int mX, int mY) {
     if (mX>x && mX < x+width && mY >y && mY <y+height) {

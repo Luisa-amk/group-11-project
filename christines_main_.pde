@@ -199,8 +199,7 @@ void mousePressed()
       currentScreen = homePage;
       focus = null;
       break;
-      
-    case EVENT_CANCELCHART:
+   case EVENT_CANCELCHART:
     println("forward cancel chart");
       if(dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31 
           || dateLow > dateHigh || dateHigh < dateLow)
@@ -216,6 +215,10 @@ void mousePressed()
         
       }
       focus = null;
+      break;
+      
+      default:
+      event = EVENT_NULL;
       break;
 
   }
