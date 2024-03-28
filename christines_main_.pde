@@ -174,6 +174,9 @@ void mousePressed()
       currentScreen = homePage;
       focus = null;
       break;
+    default:
+      event = EVENT_NULL;
+      break;
     }
   }
 }
