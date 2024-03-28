@@ -10,14 +10,15 @@ PFont stdFont;
 ArrayList widgetList;
 final int SCREENX = 1280;
 final int SCREENY = 700;
-static final int EVENT_NULL = 0;
+static final int EVENT_NULL=0;
 final int QUERY_1 = 1;
 final int QUERY_2 = 2;
 final int QUERY_3 = 3;
 static final int TEXT_WIDGET = 4;
 static final int EVENT_DATECHART = 5;
 static final int EVENT_HOME = 6;
-Screen currentScreen, dateInputScreen, dateBarChart, homePage;
+
+Screen currentScreen, dateInputScreen, dateBarChart, homePage, dateInputScreen3,cancelBarChart;
 Widget showByDate, returnToHomePage, query1, query2, query3;
 TextWidget date1, date2, focus;
 int dateLow = 0;
@@ -50,19 +51,27 @@ void setup() {
   homePage = new Screen();
   dateInputScreen = new Screen();
   dateBarChart = new Screen();
-  // make 2 neww screens for query 2 and 3
-  
+  dateInputScreen3 = new Screen();
+  cancelBarChart = new Screen();
+
+
   currentScreen = homePage;
-  // adding widgets to the home page
+
   homePage.add(query1);
   homePage.add(query2);
   homePage.add(query3);
-  // adding widgets to the screens
+
   dateInputScreen.add(date1);
   dateInputScreen.add(date2);
   dateInputScreen.add(showByDate);
   dateInputScreen.add(returnToHomePage);
   dateBarChart.add(returnToHomePage);
+
+  dateInputScreen3.add(date1);
+  dateInputScreen3.add(date2);
+  dateInputScreen3.add(showByDate);
+  dateInputScreen3.add(returnToHomePage);
+  cancelBarChart.add(returnToHomePage);
 
   flightSchedule = new FlightSchedule();
   readData("flights_full.csv");
@@ -70,6 +79,7 @@ void setup() {
   //printFlightsForAirport();
   
 }
+
 void draw() {
   currentScreen.draw();
   //draw airport graph in new screen for query 2 
@@ -77,8 +87,8 @@ void draw() {
   // PUT THIS IN AN IF STATEMENT
    //drawAirportGraph(flightSchedule); 
    // PUT THIS IN AN IF STATEMENT
-   
-   textFont(stdFont); // Set the font before drawing text
+ 
+    textFont(stdFont); // Set the font before drawing text
    textAlign(LEFT, BASELINE); // Set text alignment
    textSize(20); // 
     
@@ -96,7 +106,7 @@ void draw() {
     widgetList.add(query2);
     widgetList.add(query3);
   }
-  if(currentScreen == dateInputScreen)
+ if(currentScreen == dateInputScreen)
   {
     text("Enter a date from 1 to 31:", 100, 100);
     text("to", 470, 100);
@@ -120,6 +130,7 @@ void draw() {
     ((Widget)widgetList.get(i)).draw();              //depending on screen widgets get printed. 
   }
 }
+
 void mousePressed()
 { 
   int event;
@@ -131,10 +142,10 @@ void mousePressed()
       currentScreen = dateInputScreen;
       break;
     case QUERY_2:
-      currentScreen = dateInputScreen; // switch to new screen for total flights from LAX
+      currentScreen = dateInputScreen;
       break;
     case QUERY_3:
-      currentScreen = dateInputScreen; // switch to new screen for total cancelled flights
+      currentScreen = dateInputScreen3; // new screen total cancelled flight
       break;
     case TEXT_WIDGET:
       println("clicked a text widget");
@@ -152,7 +163,9 @@ void mousePressed()
       {
         currentScreen = dateBarChart;
         printFlightsPerDay();
+        printCancelledFlight();
         invalidInput = false;
+        
       }
       focus = null;
       break;
@@ -226,7 +239,6 @@ void keyPressed() {
   
 }
 
-
 void readData(String fileName) {
   String[] lines = loadStrings(fileName);
   if (lines != null) {
@@ -277,6 +289,12 @@ void processData(String[] lines) {
       String city = processedParts.get(4);
       flightSchedule.addFlight(day, city);
       
+      String cancelled = processedParts.get(15);
+       if (cancelled.equals("1.00")) {
+       flightSchedule.addCancelledFlight(day, cancelled);
+      }
+
+      
       String airport = processedParts.get(7);
       if(airport.equalsIgnoreCase("LAX")){        //hard coded 'LAX'- will have to be swapped with userinput variable 
         flightSchedule.addAirportFlights(day, city);
@@ -284,9 +302,9 @@ void processData(String[] lines) {
       
       
     }
-    //for (String processedPart : processedParts) {          //uncomment if you need to check array contents 
-    //  println(processedParts + "\n");
-    //}
+   // for (String processedPart : processedParts) {          //uncomment if you need to check array contents 
+     // println(processedParts + "\n");
+   // }
   }
 }
 void printFlightsPerDay() {
@@ -306,6 +324,16 @@ void printFlightsForAirport(){
     println("Number of flights from "+ airport+ " on " + date + ": " + numFlights);
     
   }
+}
+
+void printCancelledFlight() {
+  
+  for (int i = dateLow; i <= dateHigh; i++) {
+    String date = String.format("01/%02d/2022", i);
+    int c = flightSchedule.countCancelledFlight(i);
+    println("Number of cancelled flights on " + date + ": " + c);
+  }
+  
 }
 
 void drawBarChart() {
