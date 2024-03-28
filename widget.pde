@@ -5,6 +5,7 @@ class Widget {
   color widgetColor, labelColor, lineColor;
   color purpleHover = color(185, 168, 238, 100);
   color blueGreenHover = color(194, 241, 244, 100);
+  color lightBlueHover = color(172, 194, 238, 100);
   PFont widgetFont;
   
   Widget(int x, int y, int width, int height, int cornerRadius, String label,
@@ -42,6 +43,10 @@ class Widget {
     {
       widgetColor = blueGreenHover;
     }
+    else if (widgetColor == lightBlue)
+    {
+      widgetColor = lightBlueHover;
+    }
   }
   void mouseNotOver() {
     lineColor = color(0);
@@ -49,10 +54,14 @@ class Widget {
     {
       widgetColor = purple;
     }
-    else if (widgetColor == blueGreenHover)
+    else if(widgetColor == blueGreenHover)
     {
       widgetColor = bluegreen;
     } 
+    else if(widgetColor == lightBlueHover)
+    {
+      widgetColor = lightBlue;
+    }
   }
   int getEvent(int mX, int mY) {
     if (mX>x && mX < x+width && mY >y && mY <y+height) {
