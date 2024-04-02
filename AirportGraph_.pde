@@ -3,8 +3,6 @@ int aEndDate = 31;
 int[] airFlights = new int[(aEndDate-aStartDate)+1];
 int maxAxis = 0;
 int axisx;
-PFont label1, label;
-PFont label2;
 
 void drawAirportGraph(FlightSchedule sampleFS){ // don't need to pass anything , as the hashmap contains everything you need already ;
   int day = aStartDate;
@@ -45,7 +43,7 @@ void drawAirportGraph(FlightSchedule sampleFS){ // don't need to pass anything ,
 
 
 void drawText(){
- PFont label = loadFont("AndaleMono-17.vlw");
+ PFont label = loadFont("Consolas-18.vlw");
  textFont(label);
  fill(0);
  text("flights from LAX for Jan", 500, 760);
@@ -56,18 +54,18 @@ void drawText(){
 
 void labelDate(int date, int x){
  
-  PFont label2 = loadFont("AndaleMono-17.vlw");
+  PFont label2 = loadFont("Consolas-10.vlw");
   textFont(label2);
   
   fill(0);
   text(date, x, 690);
-  //text("flights from LAX for Jan", 300, 650);
- // textAlign(CENTER);
+ // text("flights from LAX for Jan", 300, 650);
+  //textAlign(CENTER);
 }
 
 void yAxis(int x )
 {
-  PFont label2 = loadFont("AndaleMono-17.vlw");
+  PFont label2 = loadFont("Consolas-10.vlw");
   textFont(label2);
   fill(0);
   text(x,270,675-x);

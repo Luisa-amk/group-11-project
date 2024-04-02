@@ -1,3 +1,4 @@
+
 class TextWidget extends Widget {
   int maxlen;
   TextWidget(int x, int y, int width, int height, int cornerRadius,
