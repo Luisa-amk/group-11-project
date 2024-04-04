@@ -1,0 +1,187 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+
+
+List<Flight> flights;
+List <FlightTicket> flightTickets;
+int rectHeight = 120;
+int rectSpacing = 20;
+PFont label2;
+
+
+void setup() {
+  label2 = loadFont("AndaleMono-14.vlw");
+  
+  flights = new ArrayList<>(); // Initialize the flights list
+  readData("flights-fullmonth");
+  
+  //for (Flight flight : flights) {          //print unfiltered flights 
+  //  println(flight);
+  //}
+  
+  
+  String arrivalAirport = "JFK";
+  String departureAirport = "LAX";
+  List<Flight> filteredFlights = filterFlightsByAirports(flights, arrivalAirport, departureAirport);
+
+
+  
+  //for (Flight flight : filteredFlights) {             // print filtered flights
+  //  println(flight);not
+  //}
+  
+  int dateLow = 1; // Example start date
+  int dateHigh = 10; // Example end date
+  
+  // Filter flights by date range
+   List<Flight> dateFilteredFlights = filterFlightsByDate(filteredFlights, dateLow, dateHigh);
+   sortByFlightNumber(dateFilteredFlights);
+   println("number of available flights : " + dateFilteredFlights.size());
+   
+  //for (Flight dateFilteredFlight : dateFilteredFlights) {
+  //  println("Filtered by Date Range: " + dateFilteredFlight);
+  //}
+  
+  
+  size(800, 600);
+  flightTickets = new ArrayList<FlightTicket>();
+   
+
+  // Iterate through filtered flights and create tickets
+  for (Flight flight : dateFilteredFlights) {
+    int x = 5;
+    int y = flightTickets.size() * (rectHeight + rectSpacing) + 50;
+    
+    // Extract flight information
+    int flightNumber = flight.getFlightNumber();
+    String arrivalTime = formatTime(flight.getArrivalTime());
+    String departureTime = formatTime(flight.getDepartureTime());
+    String originCityName = flight.getOriginCityName();
+    String destinationCityName = flight.getDestCityName();
+    
+   
+    flightTickets.add(new FlightTicket(x, y, width - 10, rectHeight, flightNumber, arrivalTime, departureTime, originCityName, destinationCityName));
+   
+  }
+ 
+  
+  
+}
+
+void draw() {
+  background(255);
+  
+  // Display flight rectangles
+  for (FlightTicket ft : flightTickets) {
+    ft.display();
+  }
+}
+
+void mouseWheel(MouseEvent event) {
+  // Scroll through flight rectangles when mouse wheel is moved
+  float e = event.getCount();
+  for (FlightTicket ft : flightTickets) {
+    ft.scroll(e);
+  }
+}
+
+String formatTime(int time) {
+  int hours = time / 100;
+  int minutes = time % 100;
+  return nf(hours, 2) + ":" + nf(minutes, 2);
+}
+
+void readData(String fileName) {
+  String[] lines = loadStrings(fileName);
+  if (lines != null) {
+    processData(lines);
+  }
+}
+
+List<Flight> processData(String[] lines) {                                      
+  boolean firstLine = true;                                                        //skip the first line in the data (the variable names)
+  for (String line : lines) {
+    if(firstLine){
+      firstLine = false; 
+      continue;
+    }
+    
+    String[] parts = line.split(",");
+    
+    ArrayList<String> processedParts = new ArrayList<String>();
+    String jointPart = "";
+    boolean withinQuotes = false;
+    
+    for (String part : parts) {
+      if (part.contains(" ") && !part.contains("\"")) {    
+        part = part.split(" ")[0];                                                //split the date to only take the "day" part 
+      }
+      if (part.startsWith("\"")) {                                                //account for quotation marks and comma in the originCityName and destCityName 
+        withinQuotes = true;
+        jointPart = part;
+      } 
+      else if (withinQuotes) {
+        jointPart += "," + part ;
+        if (part.endsWith("\"")) {
+          withinQuotes = false;
+          processedParts.add(jointPart.replaceAll("\"", ""));
+        }
+      } 
+      else {
+        if (part.isEmpty()) {
+          part = "-1";                                                            //-1 for arrTime and depTime if flight is cancelled 
+        }
+        processedParts.add(part);
+      }
+    }
+    if (processedParts.size() >= 18) {                                            //if 18 parts (dataPoints) have been processed into the array - assign each varibale name its coresponding index 
+      String date = processedParts.get(0);
+      String[] dateParts = date.split("/");                                       //splitting the date to take the 'day' part as an integer 
+      int day = Integer.parseInt(dateParts[1]);
+      String airport = processedParts.get(1);
+       int flightNum = Integer.parseInt(processedParts.get(2));
+      String departureAirport = processedParts.get(3);        
+      String originCityName = processedParts.get(4);
+      String originStateAbr =  processedParts.get(5);
+      int originWAC = Integer.parseInt(processedParts.get(6));
+      String arrivalAirport = processedParts.get(7);
+      String destCityName = processedParts.get(8);
+      String destStateAbr = processedParts.get(9);
+      int destWAC = Integer.parseInt(processedParts.get(10));
+      int crsDepTime = Integer.parseInt(processedParts.get(11));
+      int departureTime = Integer.parseInt(processedParts.get(12));
+      int crsArrTime = Integer.parseInt(processedParts.get(13));
+      int arrivalTime = Integer.parseInt(processedParts.get(14));
+      double cancelled = Double.parseDouble(processedParts.get(15));
+      double diverted = Double.parseDouble(processedParts.get(16));
+      double distance = Double.parseDouble(processedParts.get(17));
+     
+      
+      Flight flight = new Flight(day, flightNum,departureAirport,arrivalAirport, arrivalTime, departureTime, destCityName, originCityName);            //create a flight object out of the processed parts of each line  and add this to the flights arrayList 
+      flights.add(flight);
+    }
+    
+   
+  }
+  return flights;                                                                              //method returns the flights arraylist
+}
+
+
+
+void sortByFlightNumber(List<Flight> flights) {      
+    
+    Comparator<Flight> flightNumberComparator = new Comparator<Flight>() {       //using a comparator interface to sort the data 
+                                                                                 //any other sort by methods can follow exact same structure (only call sort by methods on filtered data)
+        public int compare(Flight flight1, Flight flight2) {
+            return flight1.getFlightNumber() - flight2.getFlightNumber();
+        }
+    };
+
+    // Sort the flights using the comparator
+    Collections.sort(flights, flightNumberComparator);
+}
+
+
+  
