@@ -11,14 +11,14 @@ ArrayList widgetList;
 final int SCREENX = 1280;
 final int SCREENY = 700;
 static final int EVENT_NULL=0;
-final int QUERY_1 = 1;
-final int QUERY_2 = 2;
-final int QUERY_3 = 3;
-static final int TEXT_WIDGET = 4;
-static final int EVENT_HOME = 5;
-static final int EVENT_TOTAL_FLIGHTS = 6;
-static final int EVENT_DIVERT_CANCEL = 7;
-static final int EVENT_FLIGHT_INFO = 8;
+static final int TEXT_DATE_LOW = 1;
+static final int TEXT_DATE_HIGH = 2;
+static final int EVENT_HOME = 3;
+static final int EVENT_TOTAL_FLIGHTS = 4;
+static final int EVENT_DIVERT_CANCEL = 5;
+static final int EVENT_FLIGHT_INFO = 6;
+static final int TEXT_WIDGET = 7;
+
 
 Screen currentScreen, dateBarChart, homePage, cancelBarChart, dateAirport, flightInfoScreen;
 Widget totalFlights, divertedAndCancelled, returnToHomePage, query1, query2, query3,
@@ -50,8 +50,8 @@ void setup() {
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
   dropdown = new DropDownMenu(); // NEW
-  date1 = new TextWidget(580, 250, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
-  date2 = new TextWidget(670, 250, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  date1 = new TextWidget(580, 250, 50, 40, 5, "", purple, stdFont, TEXT_DATE_LOW, 10);
+  date2 = new TextWidget(670, 250, 50, 40, 5, "", purple, stdFont, TEXT_DATE_HIGH, 10);
 
   // NEW
   totalFlights=new Widget(100, 600, 270, 40, 5, "Total Flights", purple, stdFont, EVENT_TOTAL_FLIGHTS);
@@ -199,6 +199,16 @@ void mousePressed()
     Widget theWidget = (Widget)widgetList.get(i);
     event = theWidget.getEvent(mouseX, mouseY);
     switch(event) {
+    case TEXT_DATE_LOW:
+      println("clicked a date low");
+      focus = (TextWidget) theWidget;
+      dateLow = 0;
+      break;
+    case TEXT_DATE_HIGH:
+      println("clicked a date high");
+      focus = (TextWidget) theWidget;
+      dateHigh = 0;
+      break;
     case TEXT_WIDGET:
       println("clicked a text widget");
       focus = (TextWidget) theWidget;
