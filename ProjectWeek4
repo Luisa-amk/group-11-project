@@ -444,7 +444,7 @@ List<String> sortFlightsReverseAlphabetically(List<String> flights) { //(z-a)
 }
 
 
-void printFlightsForAirport() {
+void printFlightsForAirport() { // (Z - A ) 
   for (int i = dateLow; i <= dateHigh; i++) {
     String airport = "LAX";            // will change according to user input
     String date = String.format("01/%02d/2022", i);
