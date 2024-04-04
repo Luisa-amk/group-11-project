@@ -28,7 +28,7 @@ class Widget {
   strokeWeight(2);
   rect(x, y, width, height, cornerRadius);
   fill(labelColor);
-  textSize(20); // Adjust text size as needed
+  textSize(17); // Adjust text size as needed
   textFont(widgetFont); // Set the font
   textAlign(CENTER, CENTER); // Align text to the center of the widget
   text(label, x + width / 2, y + height / 2); 
@@ -46,7 +46,7 @@ class Widget {
     else if (widgetColor == lightBlue)
     {
       widgetColor = lightBlueHover;
-    }
+    }    
   }
   void mouseNotOver() {
     lineColor = color(0);
@@ -61,8 +61,9 @@ class Widget {
     else if(widgetColor == lightBlueHover)
     {
       widgetColor = lightBlue;
-    }
+    }    
   }
+  
   int getEvent(int mX, int mY) {
     if (mX>x && mX < x+width && mY >y && mY <y+height) {
       return event;
