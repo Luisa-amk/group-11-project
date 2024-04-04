@@ -225,7 +225,7 @@ void mousePressed()
       else
       {
         currentScreen = dateBarChart;
-        printFlightsPerDay();
+        printFlightsForAirport();
         invalidInput = false;
       }
       focus = null;
@@ -412,27 +412,25 @@ void processData(String[] lines) {
   }
 }
 
-// Sample sorting method if need 
-//void printFlightsPerDay() { // sorting in alphabetically (a-z)/ (z-a)
-  //for (int i = dateLow; i <= dateHigh; i++) {
-    //String date = String.format("01/%02d/2022", i);
-    //List<String> flightsForDate = flightSchedule.getFlightsForDate(i);
-    
+void printFlightsPerDay() { // sorting in alphabetically (a-z)/ (z-a)
+  for (int i = dateLow; i <= dateHigh; i++) {
+  String date = String.format("01/%02d/2022", i);
+   
     // Sort the list of flights alphabetically
     //List<String> sortedFlights = sortAlphabetically(flightsForDate); // call to method
     //for (String flight : sortedFlights) { // hold in varaible flight
       //println("- " + flight);
     //}
     
-    // Sort the list of flights in reverse alphabetical order
+     //Sort the list of flights in reverse alphabetical order
     //List<String> reverseSortedFlights = sortFlightsReverseAlphabetically(flightsForDate);// call to method
     //for (String flight : reverseSortedFlights) { 
       //println("- " + flight);
     //}
-  //}
-//}
+  }
+}
 
-
+// sort methods 
 List<String> sortAlphabetically(List<String> flights) { // (a-z)
   List<String> sortedFlights = new ArrayList<>(flights); // new list with element from flights
   Collections.sort(sortedFlights); // 
@@ -450,10 +448,16 @@ void printFlightsForAirport() {
   for (int i = dateLow; i <= dateHigh; i++) {
     String airport = "LAX";            // will change according to user input
     String date = String.format("01/%02d/2022", i);
-    int numFlights = flightSchedule.countFLightsToAirport(i);
-    println("Number of flights from "+ airport+ " on " + date + ": " + numFlights);
+    List<String> FlightsAirport = flightSchedule.getAirport(i);
+    
+    List<String> reverseSortedFlights = sortFlightsReverseAlphabetically(FlightsAirport);// call to method
+    for (String flight : reverseSortedFlights) { 
+    println("Origin city to destination airport " + airport + " on " + date + ": " + flight);
+    }
   }
 }
+    
+ 
 
 //void printCancelledFlight() {
 //for (int i = dateLow; i <= dateHigh; i++) {
