@@ -18,12 +18,13 @@ static final int EVENT_TOTAL_FLIGHTS = 4;
 static final int EVENT_DIVERT_CANCEL = 5;
 static final int EVENT_FLIGHT_INFO = 6;
 static final int TEXT_WIDGET = 7;
-
+static final int EVENT_DEP_LOW = 8;
+static final int EVENT_DEP_HIGH = 9;
 
 Screen currentScreen, dateBarChart, homePage, cancelBarChart, dateAirport, flightInfoScreen;
 Widget totalFlights, divertedAndCancelled, returnToHomePage, query1, query2, query3,
-  home, flightInfo, depTime1, depTime2, arrTime1, arrTime2;
-TextWidget date1, date2, focus;
+  home, flightInfo;
+TextWidget date1, date2, focus, depTime1, depTime2, arrTime1, arrTime2;
 int dateLow = 1;
 int dateHigh = 31;
 String depTimeLow = "00:00";
@@ -50,6 +51,7 @@ void setup() {
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
   dropdown = new DropDownMenu(); // NEW
+  widgetList = new ArrayList();
   date1 = new TextWidget(580, 250, 50, 40, 5, "", purple, stdFont, TEXT_DATE_LOW, 10);
   date2 = new TextWidget(670, 250, 50, 40, 5, "", purple, stdFont, TEXT_DATE_HIGH, 10);
 
@@ -58,8 +60,8 @@ void setup() {
   divertedAndCancelled = new Widget(500, 600, 270, 40, 5, "Diverted/Cancelled Flights",
     purple, stdFont, EVENT_DIVERT_CANCEL);
   flightInfo = new Widget(900, 600, 270, 40, 5, "Flight Information", purple, stdFont, EVENT_FLIGHT_INFO);
-  depTime1 = new TextWidget(580, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
-  depTime2 = new TextWidget(670, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  depTime1 = new TextWidget(580, 250, 70, 40, 5, "", purple, stdFont, EVENT_DEP_LOW, 10);
+  depTime2 = new TextWidget(670, 250, 70, 40, 5, "", purple, stdFont, EVENT_DEP_HIGH, 10);
   arrTime1 = new TextWidget(580, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
   arrTime2 = new TextWidget(670, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
   // NEW
@@ -77,7 +79,6 @@ void setup() {
   cancelBarChart = new Screen();
   flightInfoScreen = new Screen();
 
-  widgetList = new ArrayList();
   currentScreen = homePage;
 
   homePage.add(home);
@@ -249,7 +250,16 @@ void mousePressed()
       break;
     case EVENT_FLIGHT_INFO:
       currentScreen = flightInfoScreen;
-
+      break;
+    case EVENT_DEP_LOW:
+      depTimeLow = "";
+      focus = depTime1;
+      break;
+    case EVENT_DEP_HIGH:
+      depTimeHigh = "";
+      focus = depTime2;
+      break;
+    
     default:
       event = EVENT_NULL;
       break;
@@ -316,6 +326,21 @@ void keyPressed() {
       }
     }
     println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
+  }
+  else if (showByDepTimeOption == true)
+  {
+    String keyString = String.valueOf(key);
+    
+    if(focus == depTime1)
+    {
+      depTimeLow = depTimeLow + keyString;
+    }
+    else if (focus == depTime2)
+    {
+      depTimeHigh = depTimeHigh + keyString;
+    } 
+    println("depTimeLow: " + depTimeLow + ", depTimeHigh: " + depTimeHigh);
+    println(keyString);
   }
 }
 
