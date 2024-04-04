@@ -35,7 +35,7 @@ class FlightSchedule {
     scheduleForAirport.put(day, flights);
     
   }
-  public int countFLightsToAirport(int date){
+  public int countFlightsToAirport(int date){
     List<String> flights = scheduleForAirport.getOrDefault(date, new ArrayList<>());
     return flights.size();
   }
@@ -79,8 +79,9 @@ class FlightSchedule {
         return String.join(", ", cityArr);
     }
     
-    public List<String> getFlightsForDate(int date) {
-  return schedule.getOrDefault(date, new ArrayList<>());
-}
-
+ public List<String> getAirport(int date) { // airport per date
+        List<String> flights = scheduleForAirport.getOrDefault(date, new ArrayList<>());
+        return schedule.getOrDefault(date, flights);
+ }
+ 
 }
