@@ -78,4 +78,9 @@ class FlightSchedule {
         List<String> cityArr = scheduleFlightsByArr.getOrDefault(time, new ArrayList<>());
         return String.join(", ", cityArr);
     }
+    
+    public List<String> getFlightsForDate(int date) {
+  return schedule.getOrDefault(date, new ArrayList<>());
+}
+
 }
