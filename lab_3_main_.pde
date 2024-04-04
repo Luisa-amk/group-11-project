@@ -86,7 +86,7 @@ void setup() {
   homePage.add(flightInfo);
 
   dateBarChart.add(returnToHomePage);
-
+  cancelBarChart.add(returnToHomePage);
   dateAirport.add(returnToHomePage);
 
   flightSchedule = new FlightSchedule();
