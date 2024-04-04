@@ -7,6 +7,7 @@ PFont label1, label;
 PFont label2;
 
 void drawAirportGraph(FlightSchedule sampleFS){ // don't need to pass anything , as the hashmap contains everything you need already ;
+  stroke(0);
   int day = aStartDate;
   int i = 0;
  // creating the array of total flights per date;
@@ -45,7 +46,7 @@ void drawAirportGraph(FlightSchedule sampleFS){ // don't need to pass anything ,
 
 
 void drawText(){
- PFont label = loadFont("AndaleMono-17.vlw");
+ PFont label = loadFont("UDDigiKyokashoN-R-20.vlw");
  textFont(label);
  fill(0);
  text("flights from LAX for Jan", 500, 760);
@@ -56,7 +57,7 @@ void drawText(){
 
 void labelDate(int date, int x){
  
-  PFont label2 = loadFont("AndaleMono-17.vlw");
+  PFont label2 = loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(label2);
   
   fill(0);
@@ -67,7 +68,7 @@ void labelDate(int date, int x){
 
 void yAxis(int x )
 {
-  PFont label2 = loadFont("AndaleMono-17.vlw");
+  PFont label2 = loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(label2);
   fill(0);
   text(x,270,675-x);

@@ -1,7 +1,7 @@
 void drawCanGr(){
     println("drawing bar chart");
   int xpos = 65; 
-  
+  stroke(0);
   fill(0);
   textAlign(CENTER);
   text("Day of the Month", (width / 2), height - 5);
@@ -32,7 +32,7 @@ void drawCanGr(){
     
    
     fill(0);
-    PFont labelFont = loadFont("AndaleMono-17.vlw");    // change font 
+    PFont labelFont = loadFont("UDDigiKyokashoN-R-20.vlw");    // change font 
     textFont(labelFont);
     textAlign(CENTER);
     text(Integer.toString(day), xpos + 10, height - 10-20);
