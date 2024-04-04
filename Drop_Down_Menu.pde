@@ -63,6 +63,8 @@ class DropDownMenu {
       showByDateOption = true;
       showByDepTimeOption = false;
       showByArrTimeOption = false;
+      dateLow = 0;
+      dateHigh = 0;
       break;
     case 1:
       println("Option 2 selected. Displaying text 2.");
