@@ -19,12 +19,14 @@ final int QUERY_1 = 1;
 final int QUERY_2 = 2;
 final int QUERY_3 = 3;
 static final int TEXT_WIDGET = 4;
-static final int EVENT_DATECHART = 5;
-static final int EVENT_HOME = 6;
-static final int EVENT_CANCELCHART = 7;
+static final int EVENT_HOME = 5;
+static final int EVENT_TOTAL_FLIGHTS = 6;
+static final int EVENT_DIVERT_CANCEL = 7;
+static final int EVENT_FLIGHT_INFO = 8;
 
-Screen currentScreen, dateInputScreen, dateBarChart, homePage, dateInputScreen3, cancelBarChart, dateAirport;
-Widget showByDate, showCancel, returnToHomePage, query1, query2, query3, home;
+Screen currentScreen, dateBarChart, homePage, cancelBarChart, dateAirport, flightInfoScreen;
+Widget totalFlights, divertedAndCancelled, returnToHomePage, query1, query2, query3, 
+  home, flightInfo, depTime1, depTime2, arrTime1, arrTime2;
 TextWidget date1, date2, focus;
 int dateLow = 0;
 int dateHigh = 0;
@@ -45,6 +47,9 @@ color lightBlue = color(172, 194, 238);
 FlightSchedule flightSchedule;
 int[] flightDates = new int[(dateHigh-dateLow)+1];
 DropDownMenu dropdown; // NEW
+boolean showByDateOption = false; // NEW
+boolean showByDepTimeOption = false; // NEW
+boolean showByArrTimeOption = false; // NEW
 
 void settings()
 {
@@ -52,52 +57,49 @@ void settings()
 }
 
 void setup() {
-  stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
+stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
   dropdown = new DropDownMenu(); // NEW
-  date1=new TextWidget(400, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
-  date2=new TextWidget(500, 75, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
-  showByDate=new Widget(100, 150, 100, 40, 5, "display", purple, stdFont, EVENT_DATECHART);
-  showCancel =new Widget(100, 150, 100, 40, 5, "display", purple, stdFont, EVENT_CANCELCHART);
-  returnToHomePage = new Widget(990, 10, 250, 40, 5,
-    "return to the home page", purple, stdFont, EVENT_HOME);
-  query1 = new Widget(SCREENX/2 - 50, 150, 100, 40, 5, "query 1", purple, stdFont, QUERY_1);
-  query2 = new Widget(SCREENX/2 - 50, 250, 100, 40, 5, "query 2", lightBlue, stdFont, QUERY_2);
-  query3 = new Widget(SCREENX/2 - 50, 350, 100, 40, 5, "query 3", bluegreen, stdFont, QUERY_3);
-  home = new Widget(SCREENX/2 -65, 60, 130, 40, 5, "HOME", purple, stdFont, EVENT_NULL);
+  date1 = new TextWidget(580, 250, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  date2 = new TextWidget(670, 250, 50, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  
+  // NEW
+  totalFlights=new Widget(100, 600, 270, 40, 5, "Total Flights", purple, stdFont, EVENT_TOTAL_FLIGHTS);
+  divertedAndCancelled = new Widget(500, 600, 270, 40, 5, "Diverted/Cancelled Flights", 
+    purple, stdFont, EVENT_DIVERT_CANCEL);
+  flightInfo = new Widget(900, 600, 270, 40, 5, "Flight Information", purple, stdFont, EVENT_FLIGHT_INFO);
+  depTime1 = new TextWidget(580, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  depTime2 = new TextWidget(670, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  arrTime1 = new TextWidget(580, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  arrTime2 = new TextWidget(670, 250, 70, 40, 5, "", purple, stdFont, TEXT_WIDGET, 10);
+  // NEW
+  
+  returnToHomePage = new Widget(990, 10, 250, 40, 5, "return to the home page", 
+    purple, stdFont, EVENT_HOME);
+  home = new Widget(SCREENX/2 - 65, 60, 130, 40, 5, "HOME", purple, stdFont, EVENT_NULL);
 
   focus = null;
   invalidInput = false;
-  homePage = new Screen();
-  dateInputScreen = new Screen();
+  homePage = new Screen(); 
   dateBarChart = new Screen();
+  
   dateAirport = new Screen();
-  dateInputScreen3 = new Screen();
   cancelBarChart = new Screen();
+  flightInfoScreen = new Screen();
 
-
+  widgetList = new ArrayList();
   currentScreen = homePage;
-
-  homePage.add(query1);
-  homePage.add(query2);
-  homePage.add(query3);
+  
   homePage.add(home);
-
-  dateInputScreen.add(date1);
-  dateInputScreen.add(date2);
-  dateInputScreen.add(showByDate);
-  dateInputScreen.add(returnToHomePage);
-  dateBarChart.add(returnToHomePage);
+  homePage.add(totalFlights);
+  homePage.add(divertedAndCancelled);
+  homePage.add(flightInfo);
+dateBarChart.add(returnToHomePage);
   
   dateAirport.add(returnToHomePage);
 
-  dateInputScreen3.add(date1);
-  dateInputScreen3.add(date2);
-  dateInputScreen3.add(showCancel);
-  dateInputScreen3.add(returnToHomePage);
-  cancelBarChart.add(returnToHomePage);
-
   flightSchedule = new FlightSchedule();
+  
   readData("flights_full.csv");
   //printFlightsPerDay();
   // printFlightsForAirport();
@@ -109,51 +111,68 @@ void setup() {
 
 void draw() {
   currentScreen.draw();
-  //draw airport graph in new screen for query 2
-
-  // PUT THIS IN AN IF STATEMENT
-  //drawAirportGraph(flightSchedule);
-  // PUT THIS IN AN IF STATEMENT
 
   textFont(stdFont); // Set the font before drawing text
   textAlign(LEFT, BASELINE); // Set text alignment
-  textSize(20); //
-
-  widgetList = new ArrayList();
+  textSize(20); 
   if (currentScreen == homePage)
   {
-    //fill(255);
-    //rectMode(CENTER);
-    //rect(SCREENX/2, 80, 120, 60);
-    //textSize(30);
-    //fill(0);
-    //textAlign(CENTER, CENTER);
-    //text("HOME", SCREENX/2, 80);
-    dropdown.draw();
-    widgetList.add(home);
-    widgetList.add(query1);
-    widgetList.add(query2);
-    widgetList.add(query3);
-  }
-  if (currentScreen == dateInputScreen)
-  {
-    text("Enter a date from 1 to 31:", 100, 100);
-    text("to", 470, 100);
-    text("January 2022", 580, 100);
     if (invalidInput)
     {
-      text("Invalid Input", 250, 175);
+      text("Invalid Input", 250, 220);
     }
-    widgetList.add(date1);
-    widgetList.add(date2);
-    widgetList.add(showByDate);
-    widgetList.add(returnToHomePage);
-  } else if (currentScreen == dateBarChart)
+    dropdown.draw();
+    widgetList.clear();  // NEW
+    widgetList.add(home);
+    widgetList.add(totalFlights);
+    widgetList.add(divertedAndCancelled);
+    widgetList.add(flightInfo);
+    if(showByDateOption == true)
+    {
+      //widgetList.clear();
+      homePage.add(date1);
+      homePage.add(date2);
+      widgetList.add(date1);
+      widgetList.add(date2);
+    }
+    else if(showByDepTimeOption == true)
+    {
+      widgetList.clear();
+      homePage.add(depTime1);
+      homePage.add(depTime2);
+      widgetList.add(depTime1);
+      widgetList.add(depTime2);
+    }
+    else if(showByArrTimeOption == true)
+    {
+      widgetList.clear();
+      homePage.add(arrTime1);
+      homePage.add(arrTime2);
+      widgetList.add(arrTime1);
+      widgetList.add(arrTime2);
+    }
+  }
+  else if (currentScreen == dateBarChart)
   {
     drawBarChart();
+    widgetList.clear();
     widgetList.add(returnToHomePage);
-  } else if (currentScreen == dateAirport) {
+  }
+  else if (currentScreen == dateAirport) 
+  {
     drawAirportGraph(flightSchedule);
+    widgetList.clear();
+    widgetList.add(returnToHomePage);
+  }
+  else if (currentScreen == cancelBarChart)
+  {
+    drawCanGr();
+    widgetList.clear();
+    widgetList.add(returnToHomePage);
+  }
+  else if(currentScreen == flightInfoScreen)
+  {
+    widgetList.clear();
     widgetList.add(returnToHomePage);
   }
   // add else-if statements to switch to add widgets on that screen to ArrayList of
@@ -161,25 +180,23 @@ void draw() {
     ((Widget)widgetList.get(i)).draw();              //depending on screen widgets get printed.
   }
 
-  if (currentScreen == dateInputScreen3)
-  {
-    text("total cancelled flights", 50, 50);
-    text("Enter a date from 1 to 31:", 100, 100);
-    text("to", 470, 100);
-    text("January 2022", 580, 100);
-    if (invalidInput)
-    {
-      text("Invalid Input", 250, 175);
-    }
-    widgetList.add(date1);
-    widgetList.add(date2);
-    widgetList.add(showCancel);
-    widgetList.add(returnToHomePage);
-  } else if (currentScreen == cancelBarChart)
-  {
-    drawCanGr();
-    widgetList.add(returnToHomePage);
-  }
+  //if (currentScreen == dateInputScreen3)
+  //{
+  //  text("total cancelled flights", 50, 50);
+  //  text("Enter a date from 1 to 31:", 100, 100);
+  //  text("to", 470, 100);
+  //  text("January 2022", 580, 100);
+  //  if (invalidInput)
+  //  {
+  //    text("Invalid Input", 250, 175);
+  //  }
+  //  widgetList.clear();
+  //  widgetList.add(date1);
+  //  widgetList.add(date2);
+  //  widgetList.add(divertedAndCancelled);
+  //  widgetList.add(returnToHomePage);
+  //} 
+
   // add else-if statements to switch to add widgets on that screen to ArrayList of
   for (int i = 0; i < widgetList.size(); i++) {
     ((Widget)widgetList.get(i)).draw();              //depending on screen widgets get printed.
@@ -188,33 +205,24 @@ void draw() {
 
 void mousePressed()
 {
-  dropdown.mousePressed(); // NEW
   int event;
   for (int i = 0; i < widgetList.size(); i++) {
     Widget theWidget = (Widget)widgetList.get(i);
     event = theWidget.getEvent(mouseX, mouseY);
     switch(event) {
-    case QUERY_1:
-      currentScreen = dateInputScreen;
-      break;
-    case QUERY_2:
-      currentScreen = dateAirport;
-      break;
-    case QUERY_3:
-      currentScreen = dateInputScreen3; // new screen total cancelled flight
-      break;
     case TEXT_WIDGET:
       println("clicked a text widget");
       focus = (TextWidget) theWidget;
       return;
-    case EVENT_DATECHART:
+    case EVENT_TOTAL_FLIGHTS:
       println("forward");
       if (dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31
         || dateLow > dateHigh || dateHigh < dateLow)
       {
         println("invalid input");
         invalidInput = true;
-      } else
+      } 
+      else
       {
         currentScreen = dateBarChart;
         printFlightsPerDay();
@@ -227,25 +235,32 @@ void mousePressed()
       currentScreen = homePage;
       focus = null;
       break;
-    case EVENT_CANCELCHART:
+    case EVENT_DIVERT_CANCEL:
       println("forward cancel chart");
       if (dateLow <=0 || dateLow > 31 || dateHigh <=0 || dateHigh > 31
         || dateLow > dateHigh || dateHigh < dateLow)
       {
         println("invalid input");
         invalidInput = true;
-      } else
+      } 
+      else
       {
         currentScreen = cancelBarChart;
         invalidInput = false;
       }
       focus = null;
       break;
-
+    case EVENT_FLIGHT_INFO:
+      currentScreen = flightInfoScreen;
+    
     default:
       event = EVENT_NULL;
       break;
     }
+  }
+  if(currentScreen == homePage)
+  {
+    dropdown.mousePressed(); // NEW
   }
 }
 
@@ -274,29 +289,35 @@ void keyPressed() {
       if (dateLow == 0)
       {
         dateLow = keyValue;
-      } else
+      } 
+      else
       {
         dateLow = dateLow*10 + keyValue;
       }
-    } else if (focus == date2)
+    } 
+    else if (focus == date2)
     {
       if (dateHigh == 0)
       {
         dateHigh = keyValue;
-      } else if (key == BACKSPACE)
+      } 
+      else if (key == BACKSPACE)
       {
         dateHigh = dateHigh / 10;
-      } else
+      } 
+      else
       {
         dateHigh = dateHigh*10 + keyValue;
       }
     }
-  } else if (key == BACKSPACE)
+  }
+  else if (key == BACKSPACE)
   {
     if (focus == date1)
     {
       dateLow = dateLow / 10; // Remove last digit
-    } else if (focus == date2)
+    } 
+    else if (focus == date2)
     {
       dateHigh = dateHigh / 10; // Remove last digit
     }
@@ -391,24 +412,26 @@ void processData(String[] lines) {
   }
 }
 
-void printFlightsPerDay() { // sorting in alphabetically (a-z)/ (z-a)
-  for (int i = dateLow; i <= dateHigh; i++) {
-    String date = String.format("01/%02d/2022", i);
-    List<String> flightsForDate = flightSchedule.getFlightsForDate(i);
+// Sample sorting method if need 
+//void printFlightsPerDay() { // sorting in alphabetically (a-z)/ (z-a)
+  //for (int i = dateLow; i <= dateHigh; i++) {
+    //String date = String.format("01/%02d/2022", i);
+    //List<String> flightsForDate = flightSchedule.getFlightsForDate(i);
     
     // Sort the list of flights alphabetically
-    List<String> sortedFlights = sortAlphabetically(flightsForDate); // call to method
-    for (String flight : sortedFlights) { // hold in varaible flight
-      println("- " + flight);
-    }
+    //List<String> sortedFlights = sortAlphabetically(flightsForDate); // call to method
+    //for (String flight : sortedFlights) { // hold in varaible flight
+      //println("- " + flight);
+    //}
     
     // Sort the list of flights in reverse alphabetical order
-    List<String> reverseSortedFlights = sortFlightsReverseAlphabetically(flightsForDate);// call to method
-    for (String flight : reverseSortedFlights) { 
-      println("- " + flight);
-    }
-  }
-}
+    //List<String> reverseSortedFlights = sortFlightsReverseAlphabetically(flightsForDate);// call to method
+    //for (String flight : reverseSortedFlights) { 
+      //println("- " + flight);
+    //}
+  //}
+//}
+
 
 List<String> sortAlphabetically(List<String> flights) { // (a-z)
   List<String> sortedFlights = new ArrayList<>(flights); // new list with element from flights
@@ -445,10 +468,11 @@ void printFlightsForAirport() {
     
 
 
+
 void drawBarChart() {
   println("drawing bar chart");
   int xpos = 65;
-
+  stroke(0);
   fill(0);
   textAlign(CENTER);
   text("Day of the Month", (width / 2), height - 5);
