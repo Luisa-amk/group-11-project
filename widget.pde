@@ -13,7 +13,7 @@ class Widget {
     this.x=x;
     this.y=y;
     this.width = width;
-    this.height= height;
+    this.height = height;
     this.cornerRadius = cornerRadius;
     this.label=label;
     this.event=event;
