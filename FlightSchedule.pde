@@ -2,6 +2,7 @@ class FlightSchedule {
   private Map<Integer, List<String>> schedule;
   private Map<Integer, List<String>> scheduleForAirport;
   private Map<Integer, List<String>> scheduleFlightsByDep;
+  private Map<Integer, List<String>> scheduleFlightsByArr; 
   
 
   public  FlightSchedule() { // constructor 
@@ -43,5 +44,20 @@ class FlightSchedule {
     List<String> cityDeps = scheduleFlightsByDep.getOrDefault(time, new ArrayList<>());
     return cityDeps.size();
   }
+  
+  public void addFlightByArrTime( int time, String city ){
+    List<String> cityArr = scheduleFlightsByArr.getOrDefault(time, new ArrayList<>());
+    cityArr.add(city); // an array list of the cities, from which 
+
+    scheduleFlightsByArr.put(time, cityArr);
+  }
+
+  public int countFlightsByArrTime(int time){ // size 
+    List<String> cityArr = scheduleFlightsByArr.getOrDefault(time, new ArrayList<>());
+    return cityArr.size();
+  }
+
+  
+   
   
 }
