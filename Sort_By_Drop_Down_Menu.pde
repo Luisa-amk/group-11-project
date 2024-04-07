@@ -4,7 +4,7 @@ class SortByDropDownMenu {
   int dropdownY = 150;
   int dropdownWidth = 255;
   int dropdownHeight = 35;
-  String[] FilterByOptions = {"Airport Name (A-Z)", "Airport Name (Z-A)", "Flight Number (Asc.)"};
+  String[] FilterByOptions = {"Airport Name (A-Z)", "Airport Name (Z-A)", "Distance (Short-Long)", "Distance (Long-Short)", "Flight Number (Asc.)"};
   int selectedOptionIndex = -1;
   boolean dropdownOpen = false;
   String selectedOptionText = "";
@@ -18,7 +18,7 @@ class SortByDropDownMenu {
     textAlign(CENTER, CENTER);
 
     // Draw arrow indicating dropdown state
-    float arrowX = dropdownX + dropdownWidth - 20;
+    float arrowX = dropdownX + dropdownWidth - 15;
     float arrowY = dropdownY + dropdownHeight / 2;
     float arrowSize = 6;
 
@@ -80,18 +80,40 @@ class SortByDropDownMenu {
       println("Sort By: Airport (A-Z)");
       sortByAirportAToZ = true; 
       sortByAirportZToA = false; 
+      sortByFlightDistanceShortToLong = false;
+      sortByFlightDistanceLongToShort = false;
       sortByFlightNumber = false;
       break;
     case 1:
       println("Sort By: Airport (Z-A)");
       sortByAirportAToZ = false; 
       sortByAirportZToA = true; 
+      sortByFlightDistanceShortToLong = false;
+      sortByFlightDistanceLongToShort = false;
       sortByFlightNumber = false;
       break;
     case 2:
+      println("Sort By: Flight Distance (Short - Long)");
+      sortByAirportAToZ = false; 
+      sortByAirportZToA = false; 
+      sortByFlightDistanceShortToLong = true;
+      sortByFlightDistanceLongToShort = false;
+      sortByFlightNumber = false;
+      break;
+    case 3:
+      println("Sort By: Flight Distance (Long - Short)");
+      sortByAirportAToZ = false; 
+      sortByAirportZToA = false; 
+      sortByFlightDistanceShortToLong = false;
+      sortByFlightDistanceLongToShort = true;
+      sortByFlightNumber = false;
+      break;
+    case 4:
       println("Sort By: Flight Number (Ascending)");
       sortByAirportAToZ = false; 
       sortByAirportZToA = false; 
+      sortByFlightDistanceShortToLong = false;
+      sortByFlightDistanceLongToShort = false;
       sortByFlightNumber = true;
       break;
     default:

@@ -54,6 +54,8 @@ boolean filterByDistOption = false;
 SortByDropDownMenu sortByDropDown; // NEW
 boolean sortByAirportAToZ = false; // NEW
 boolean sortByAirportZToA = false; // NEW
+boolean sortByFlightDistanceShortToLong = false; // NEW
+boolean sortByFlightDistanceLongToShort = false;
 boolean sortByFlightNumber = false; // NEW
 
 boolean dateLowFirstClick = false; // NEW
