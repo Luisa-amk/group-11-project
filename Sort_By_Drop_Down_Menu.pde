@@ -1,10 +1,10 @@
-class DropDownMenu {
+class SortByDropDownMenu {
   PFont font;
-  int dropdownX = 70;
-  int dropdownY = 300;
-  int dropdownWidth = 200;
+  int dropdownX = 990;
+  int dropdownY = 150;
+  int dropdownWidth = 255;
   int dropdownHeight = 35;
-  String[] FilterByOptions = {"Date Range", "Departure Time", "Arrival Time", "Distance"};
+  String[] FilterByOptions = {"Airport Name (A-Z)", "Airport Name (Z-A)", "Flight Number (Asc.)"};
   int selectedOptionIndex = -1;
   boolean dropdownOpen = false;
   String selectedOptionText = "";
@@ -12,7 +12,7 @@ class DropDownMenu {
   void draw() {
     // Draw dropdown button
     stroke(0);
-    fill(darkPurple);
+    fill(purple);
     rect(dropdownX, dropdownY, dropdownWidth, dropdownHeight);
     fill(0);
     textAlign(CENTER, CENTER);
@@ -46,7 +46,7 @@ class DropDownMenu {
     // Draw dropdown options if dropdown is open
     if (dropdownOpen) {
       for (int i = 0; i < FilterByOptions.length; i++) {
-        fill(darkPurple);
+        fill(purple);
         rect(dropdownX, dropdownY + dropdownHeight * (i + 1), dropdownWidth, dropdownHeight);
         fill(0);
         textAlign(CENTER, CENTER);
@@ -77,36 +77,22 @@ class DropDownMenu {
     // Handle the event based on the selected option index
     switch (optionIndex) {
     case 0:
-      println("Filter By: Date Range");
-      selectedOptionText = "Input Date Range (1-31)";
-      filterByDateOption = true;
-      filterByDepTimeOption = false;
-      filterByArrTimeOption = false;
-      filterByDistOption = false;
+      println("Sort By: Airport (A-Z)");
+      sortByAirportAToZ = true; 
+      sortByAirportZToA = false; 
+      sortByFlightNumber = false;
       break;
     case 1:
-      println("Filter By: Departure Time");
-      selectedOptionText = "Input Departure Time By Hour (i.e. 07.00 or 15.00, not 16.45)";
-      filterByDateOption = false;
-      filterByDepTimeOption = true;
-      filterByArrTimeOption = false;
-      filterByDistOption = false;
+      println("Sort By: Airport (Z-A)");
+      sortByAirportAToZ = false; 
+      sortByAirportZToA = true; 
+      sortByFlightNumber = false;
       break;
     case 2:
-      println("Filter By: Arrival Time");
-      selectedOptionText = "Input Arrival Time By Hour (i.e. 07.00 or 15.00, not 16.45)";
-      filterByDateOption = false;
-      filterByDepTimeOption = false;
-      filterByArrTimeOption = true;
-      filterByDistOption = false;
-      break;
-    case 3:
-      println("Filter By: Distance");
-      selectedOptionText = "Drag the slider to choose a distance";
-      filterByDateOption = false;
-      filterByDepTimeOption = false;
-      filterByArrTimeOption = false;
-      filterByDistOption = true;
+      println("Sort By: Flight Number (Ascending)");
+      sortByAirportAToZ = false; 
+      sortByAirportZToA = false; 
+      sortByFlightNumber = true;
       break;
     default:
       println("No option selected.");

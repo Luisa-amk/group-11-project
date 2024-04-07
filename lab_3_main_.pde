@@ -7,7 +7,9 @@ String[] flights;
 String[] lines;
 
 PFont stdFont;
-ArrayList widgetList;
+ArrayList widgetList; 
+ArrayList screenWidgets;
+
 final int SCREENX = 1280;
 final int SCREENY = 700;
 static final int EVENT_NULL=0;
@@ -21,34 +23,45 @@ static final int EVENT_DEP_LOW = 7;
 static final int EVENT_DEP_HIGH = 8;
 static final int EVENT_ARR_LOW = 9;
 static final int EVENT_ARR_HIGH = 10;
+static final int EVENT_DEP_AIRPORT = 11;
+static final int EVENT_DEST_AIRPORT = 12;
 
 Screen currentScreen, dateBarChart, homePage, cancelBarChart, dateAirport, flightInfoScreen;
 Widget totalFlights, divertedAndCancelled, returnToHomePage, query1, query2, query3,
   home, flightInfo, showMe;
-TextWidget date1, date2, focus, depTime1, depTime2, arrTime1, arrTime2;
+TextWidget date1, date2, focus, depTime1, depTime2, arrTime1, arrTime2, airport1, airport2;
 int dateLow = 1;
 int dateHigh = 31;
 String depTimeLow = "00.00";
 String depTimeHigh = "23.59";
 String arrTimeLow = "00.00";
 String arrTimeHigh = "23.59";
+String depAirport = "";
+String destAirport = "";
 boolean invalidDate;
 color purple = color(185, 168, 238);
 color bluegreen = color(194, 241, 244);
 color lightBlue = color(172, 194, 238);
-color darkPurple = color(139, 124, 207);
+color darkPurple = color(139, 124, 207); // NEW
 FlightSchedule flightSchedule;
-int[] flightDates = new int[(dateHigh-dateLow)+1];
-DropDownMenu dropdown; // NEW
-boolean showByDateOption = false; // NEW
-boolean showByDepTimeOption = false; // NEW
-boolean showByArrTimeOption = false; // NEW
-boolean dateLowFirstClick = false;
-boolean dateHighFirstClick = false;
-boolean depTimeLowFirstClick = false;
-boolean depTimeHighFirstClick = false;
-boolean arrTimeLowFirstClick = false;
-boolean arrTimeHighFirstClick = false;
+int[] flightDates = new int[(dateHigh-dateLow)+1]; 
+boolean filterByAirport = false;;
+DropDownMenu filterByDropDown; // NEW
+boolean filterByDateOption = false; // NEW
+boolean filterByDepTimeOption = false; // NEW
+boolean filterByArrTimeOption = false; // NEW
+boolean filterByDistOption = false;
+SortByDropDownMenu sortByDropDown; // NEW
+boolean sortByAirportAToZ = false; // NEW
+boolean sortByAirportZToA = false; // NEW
+boolean sortByFlightNumber = false; // NEW
+
+boolean dateLowFirstClick = false; // NEW
+boolean dateHighFirstClick = false; // NEW
+boolean depTimeLowFirstClick = false; // NEW
+boolean depTimeHighFirstClick = false; // NEW
+boolean arrTimeLowFirstClick = false; // NEW
+boolean arrTimeHighFirstClick = false; // NEW
 
 
 void settings()
@@ -59,32 +72,34 @@ void settings()
 void setup() {
   stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
   textFont(stdFont);
-  dropdown = new DropDownMenu(); // NEW
+  filterByDropDown = new DropDownMenu(); // NEW
+  sortByDropDown = new SortByDropDownMenu(); // NEW
   widgetList = new ArrayList();
-  date1 = new TextWidget(width/2 - 120, 250, 70, 40, 5, "", purple, stdFont, TEXT_DATE_LOW, 10);
-  date2 = new TextWidget(width/2 + 50, 250, 70, 40, 5, "", purple, stdFont, TEXT_DATE_HIGH, 10);
+  date1 = new TextWidget(width/2 - 120, 400, 70, 40, 5, "", purple, stdFont, TEXT_DATE_LOW, 10);
+  date2 = new TextWidget(width/2 + 50, 400, 70, 40, 5, "", purple, stdFont, TEXT_DATE_HIGH, 10);
 
   // NEW
-  totalFlights=new Widget(100, 600, 270, 40, 5, "Total Flights", purple, stdFont, EVENT_TOTAL_FLIGHTS);
-  divertedAndCancelled = new Widget(500, 600, 270, 40, 5, "Diverted/Cancelled Flights",
+  totalFlights = new Widget(970, 330, 270, 40, 5, "Total Flights", purple, stdFont, EVENT_TOTAL_FLIGHTS);
+  divertedAndCancelled = new Widget(970, 390, 270, 40, 5, "Diverted/Cancelled Flights",
     purple, stdFont, EVENT_DIVERT_CANCEL);
-  flightInfo = new Widget(900, 600, 270, 40, 5, "Flight Information", purple, stdFont, EVENT_FLIGHT_INFO);
-  depTime1 = new TextWidget(width/2 - 120, 250, 70, 40, 5, "", purple, stdFont, EVENT_DEP_LOW, 10);
-  depTime2 = new TextWidget(width/2 + 50, 250, 70, 40, 5, "", purple, stdFont, EVENT_DEP_HIGH, 10);
-  arrTime1 = new TextWidget(width/2 - 120, 250, 70, 40, 5, "", purple, stdFont, EVENT_ARR_LOW, 10);
-  arrTime2 = new TextWidget(width/2 + 50, 250, 70, 40, 5, "", purple, stdFont, EVENT_ARR_HIGH, 10);
+  flightInfo = new Widget(970, 450, 270, 40, 5, "Flight Information", purple, stdFont, EVENT_FLIGHT_INFO);
+  depTime1 = new TextWidget(width/2 - 120, 400, 70, 40, 5, "", purple, stdFont, EVENT_DEP_LOW, 10);
+  depTime2 = new TextWidget(width/2 + 50, 400, 70, 40, 5, "", purple, stdFont, EVENT_DEP_HIGH, 10);
+  arrTime1 = new TextWidget(width/2 - 120, 400, 70, 40, 5, "", purple, stdFont, EVENT_ARR_LOW, 10);
+  arrTime2 = new TextWidget(width/2 + 50, 400, 70, 40, 5, "", purple, stdFont, EVENT_ARR_HIGH, 10);
+  airport1 = new TextWidget(590, 40, 150, 40, 5, "", purple, stdFont, EVENT_DEP_AIRPORT, 10);
+  airport2 = new TextWidget(1090, 40, 150, 40, 5, "", purple, stdFont, EVENT_DEST_AIRPORT, 10);
   // NEW
 
-  returnToHomePage = new Widget(990, 20, 250, 40, 5, "return to the home page",
+  returnToHomePage = new Widget(990, 40, 250, 40, 5, "return to the home page",
     purple, stdFont, EVENT_HOME);
-  home = new Widget(30, 20, 130, 40, 5, "HOME", darkPurple, stdFont, EVENT_NULL);
-  showMe = new Widget(SCREENX/2 - 65, 500, 130, 40, 5, "SHOW ME", darkPurple, stdFont, EVENT_NULL);
+  home = new Widget(40, 40, 130, 40, 5, "HOME", darkPurple, stdFont, EVENT_NULL);
+  showMe = new Widget(1040, 280, 130, 35, 5, "SHOW ME", darkPurple, stdFont, EVENT_NULL);
 
   focus = null;
   invalidDate = false;
   homePage = new Screen();
   dateBarChart = new Screen();
-
   dateAirport = new Screen();
   cancelBarChart = new Screen();
   flightInfoScreen = new Screen();
@@ -92,6 +107,8 @@ void setup() {
   currentScreen = homePage;
 
   homePage.add(home);
+  homePage.add(airport1);
+  homePage.add(airport2);
   homePage.add(totalFlights);
   homePage.add(divertedAndCancelled);
   homePage.add(flightInfo);
@@ -99,7 +116,6 @@ void setup() {
 
   dateBarChart.add(returnToHomePage);
   cancelBarChart.add(returnToHomePage);
-  //dateAirport.add(returnToHomePage);
   flightInfoScreen.add(returnToHomePage);
 
   flightSchedule = new FlightSchedule();
@@ -109,100 +125,14 @@ void setup() {
 }
 
 void draw() {
-  currentScreen.draw();
-  textFont(stdFont); // Set the font before drawing text
-  textAlign(CENTER, CENTER); // Set text alignment
-  textSize(20);
-  if (currentScreen == homePage) //<>//
-  {
-    if (invalidDate)
-    {
-      text("Invalid Date", width/2, 400);
-    }
-    text("Filter By: ", 90, 165);
-    dropdown.draw();
-    widgetList.clear();  // NEW
-    widgetList.add(home);
-    widgetList.add(showMe);
-    widgetList.add(totalFlights);
-    widgetList.add(divertedAndCancelled);
-    widgetList.add(flightInfo);
-
-    if (showByDateOption)
-    {
-      widgetList.clear();  // NEW
-      text("to", width/2, 270);
-      homePage.add(date1);
-      homePage.add(date2);
-      widgetList.add(date1);
-      widgetList.add(date2);
-      widgetList.add(totalFlights);
-      widgetList.add(divertedAndCancelled);
-      widgetList.add(flightInfo);
-    }
-    else if (showByDepTimeOption)
-    {
-      widgetList.clear();  // NEW
-      text("to", width/2, 270);
-      homePage.add(depTime1);
-      homePage.add(depTime2);
-      widgetList.add(depTime1);
-      widgetList.add(depTime2);
-      widgetList.add(totalFlights);
-      widgetList.add(divertedAndCancelled);
-      widgetList.add(flightInfo);
-    } 
-    else if (showByArrTimeOption)
-    {
-      widgetList.clear();  // NEW
-      text("to", width/2, 270);
-      homePage.add(arrTime1);
-      homePage.add(arrTime2);
-      widgetList.add(arrTime1);
-      widgetList.add(arrTime2);
-      widgetList.add(totalFlights);
-      widgetList.add(divertedAndCancelled);
-      widgetList.add(flightInfo);
-    }
-  } 
-  else if (currentScreen == dateBarChart)
-  {
-    drawBarChart();
-    widgetList.clear();
-    widgetList.add(returnToHomePage);
-  } 
-  else if (currentScreen == dateAirport)
-  {
-    drawAirportGraph(flightSchedule);
-    widgetList.clear();
-    widgetList.add(returnToHomePage);
-  } 
-  else if (currentScreen == cancelBarChart)
-  {
-    drawCanGr();
-    widgetList.clear();
-    widgetList.add(returnToHomePage);
-  } 
-  else if (currentScreen == flightInfoScreen)
-  {
-    widgetList.clear();
-    widgetList.add(returnToHomePage);
-  }
-  // add else-if statements to switch to add widgets on that screen to ArrayList of
-  for (int i = 0; i < widgetList.size(); i++) {
-    ((Widget)widgetList.get(i)).draw();              //depending on screen widgets get printed.
-  }
-  // add else-if statements to switch to add widgets on that screen to ArrayList of
-  for (int i = 0; i < widgetList.size(); i++) {
-    ((Widget)widgetList.get(i)).draw();              //depending on screen widgets get printed.
-  }
+  currentScreen.draw(); //<>//
 }
 
 void mousePressed()
 {
   int event;
-  for (int i = 0; i < widgetList.size(); i++) {
-    Widget theWidget = (Widget)widgetList.get(i);
+  for (int i = 0; i < screenWidgets.size(); i++) {
+    Widget theWidget = (Widget)screenWidgets.get(i);
     event = theWidget.getEvent(mouseX, mouseY);
     switch(event) {
     case TEXT_DATE_LOW:
@@ -302,6 +232,14 @@ void mousePressed()
       arrTimeHighFirstClick = true;
       focus = (TextWidget) theWidget;
       break;
+     case EVENT_DEP_AIRPORT:
+       focus = (TextWidget) theWidget;
+       filterByAirport = true;
+       break;
+     case EVENT_DEST_AIRPORT:
+       focus = (TextWidget) theWidget;
+       filterByAirport = true;
+       break;
     default:
       event = EVENT_NULL;
       break;
@@ -309,7 +247,11 @@ void mousePressed()
   }
   if (currentScreen == homePage)
   {
-    dropdown.mousePressed(); // NEW
+    filterByDropDown.mousePressed(); // NEW
+  }
+  if (currentScreen == flightInfoScreen)
+  {
+    sortByDropDown.mousePressed();
   }
 }
 
@@ -330,7 +272,7 @@ void keyPressed() {
   if (focus != null) {
     focus.append(key);
   }
-  if (showByDateOption)
+  if (filterByDateOption)
   {
     if (Character.isDigit(key))
     {
@@ -369,7 +311,7 @@ void keyPressed() {
     }
     println("dateLow: " + dateLow + ", dateHigh: " + dateHigh);
   }
-  else if (showByDepTimeOption)
+  else if (filterByDepTimeOption)
   {
     if (key == BACKSPACE) {
       if (focus == depTime1 && depTimeLow.length() > 0) {
@@ -391,7 +333,7 @@ void keyPressed() {
       println("depTimeLow: " + depTimeLow + ", depTimeHigh: " + depTimeHigh);
     }
   }
-  else if(showByArrTimeOption)
+  else if(filterByArrTimeOption)
   {
     if (key == BACKSPACE) {
       if (focus == arrTime1 && arrTimeLow.length() > 0) {
@@ -411,6 +353,28 @@ void keyPressed() {
         arrTimeHigh = arrTimeHigh + keyString;
       } 
       println("arrTimeLow: " + arrTimeLow + ", arrTimeHigh: " + arrTimeHigh);
+    }
+  }
+  else if(filterByAirport)
+  {
+    if (key == BACKSPACE) {
+      if (focus == airport1 && depAirport.length() > 0) {
+        depAirport = depAirport.substring(0, depAirport.length() - 1);
+      } else if (focus == airport2 && destAirport.length() > 0) {
+        destAirport = destAirport.substring(0, destAirport.length() - 1);
+      }
+    } else {
+      String keyString = String.valueOf(key);
+      
+      if(focus == airport1)
+      {
+        depAirport = depAirport + keyString;
+      }
+      else if (focus == airport2)
+      {
+        destAirport = destAirport + keyString;
+      } 
+      println("depAirport: " + depAirport + ", destAirport: " + destAirport);
     }
   }
 }
