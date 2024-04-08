@@ -4,7 +4,7 @@ class SortByDropDownMenu {
   int dropdownY = 150;
   int dropdownWidth = 255;
   int dropdownHeight = 35;
-  String[] FilterByOptions = {"Airport Name (A-Z)", "Airport Name (Z-A)", "Distance (Short-Long)", "Distance (Long-Short)", "Flight Number (Asc.)"};
+  String[] FilterByOptions = {"Airport Name (A-Z)", "Airport Name (Z-A)", "Distance (Short-Long)", "Distance (Long-Short)", "Flight Number"};
   int selectedOptionIndex = -1;
   boolean dropdownOpen = false;
   String selectedOptionText = "";
