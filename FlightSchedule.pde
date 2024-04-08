@@ -2,11 +2,16 @@ class FlightSchedule {
   private Map<Integer, List<String>> schedule;
   private Map<Integer, List<String>> scheduleForAirport;
   private Map<Integer, List<String>> scheduleFlightsByDep;
+  private Map<Integer, List<String>> scheduleFlightsByArr; 
+  private Map<Integer, List<String>> cancelledFlight; 
   
 
   public  FlightSchedule() { // constructor 
     this.schedule = new HashMap<>();
     this.scheduleForAirport = new HashMap<>();
+    this.scheduleFlightsByDep = new HashMap<>();
+    this.cancelledFlight = new HashMap<>();
+    this.scheduleFlightsByArr = new HashMap<>();
     this.scheduleFlightsByDep = new HashMap<>();
   }
 
@@ -43,5 +48,32 @@ class FlightSchedule {
     List<String> cityDeps = scheduleFlightsByDep.getOrDefault(time, new ArrayList<>());
     return cityDeps.size();
   }
+  
+  public void addFlightByArrTime( int time, String city ){
+    List<String> cityArr = scheduleFlightsByArr.getOrDefault(time, new ArrayList<>());
+    cityArr.add(city); // an array list of the cities, from which 
+
+    scheduleFlightsByArr.put(time, cityArr);
+  }
+
+  public int countFlightsByArrTime(int time){ // size 
+    List<String> cityArr = scheduleFlightsByArr.getOrDefault(time, new ArrayList<>());
+    return cityArr.size();
+  }
+  
+    public void addCancelledFlight(int day, String cancelled){
+    List<String> cancelledFlights = cancelledFlight.getOrDefault(day, new ArrayList<>());
+    cancelledFlights.add(cancelled);
+    cancelledFlight.put(day,cancelledFlights);    
+  }
+  
+  
+  public int countCancelledFlight(int date){
+    List<String> cancelled = cancelledFlight.getOrDefault(date, new ArrayList<>());
+    return cancelled.size();
+  }
+
+  
+   
   
 }
