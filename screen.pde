@@ -38,6 +38,8 @@ class Screen {
         homePage.add(date2);
         screenWidgets.add(date1);
         screenWidgets.add(date2);
+        cp5.remove("sliderRange");
+        sliderAdded = false;
       } else if (filterByDepTimeOption)
       {
         screenWidgets.clear();  // NEW
@@ -46,6 +48,8 @@ class Screen {
         homePage.add(depTime2);
         screenWidgets.add(depTime1);
         screenWidgets.add(depTime2);
+        cp5.remove("sliderRange");
+        sliderAdded = false;
       } else if (filterByArrTimeOption)
       {
         screenWidgets.clear();  // NEW
@@ -54,12 +58,12 @@ class Screen {
         homePage.add(arrTime2);
         screenWidgets.add(arrTime1);
         screenWidgets.add(arrTime2);
+        cp5.remove("sliderRange");
+        sliderAdded = false;
       } else if (filterByDistOption)
       {
-        screenWidgets.clear();  // NEW
-
-        // ADD SLIDER
-
+        screenWidgets.clear();  // NEW;
+        slider.draw(); // ADD SLIDER
       }
       screenWidgets.add(home);
       screenWidgets.add(airport1);

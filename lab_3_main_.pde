@@ -2,9 +2,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import controlP5.*;
 
 String[] flights;
 String[] lines;
+ControlP5 cp5;
+DoubleHandleSlider slider;
 
 PFont stdFont;
 ArrayList widgetList; 
@@ -65,6 +68,7 @@ boolean depTimeHighFirstClick = false; // NEW
 boolean arrTimeLowFirstClick = false; // NEW
 boolean arrTimeHighFirstClick = false; // NEW
 
+boolean sliderAdded = false;
 
 void settings()
 {
@@ -76,6 +80,9 @@ void setup() {
   textFont(stdFont);
   filterByDropDown = new DropDownMenu(); // NEW
   sortByDropDown = new SortByDropDownMenu(); // NEW
+  cp5 = new ControlP5(this);
+  slider = new DoubleHandleSlider(cp5);
+
   widgetList = new ArrayList();
   date1 = new TextWidget(width/2 - 120, 400, 70, 40, 5, "", purple, stdFont, TEXT_DATE_LOW, 10);
   date2 = new TextWidget(width/2 + 50, 400, 70, 40, 5, "", purple, stdFont, TEXT_DATE_HIGH, 10);
