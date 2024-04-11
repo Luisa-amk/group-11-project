@@ -1,4 +1,4 @@
-// final code with the total graphs included  //<>//
+// final code //<>//
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +17,7 @@ List<Flight> fitleredFlights2;
 List<Flight> fitleredFlights3;
 List<Flight> fitleredFlights4;
 List<Flight> datefilteredFlights;
+String notFinished = "Continue";
 int rectHeight = 135;
 int rectSpacing = 20;
 PImage airplaneImg;
@@ -45,16 +46,17 @@ static final int EVENT_DEP_AIRPORT = 11;
 static final int EVENT_DEST_AIRPORT = 12;
 static final int EVENT_FLIGHTS_PER_HOUR = 13;
 static final int EVENT_PIE_CHART = 14;
+static final int EVENT_OTHER_CHART = 15;
 final int FLIGHTS_BY_DATE = 1;  // 2000 
 final int CANCEL_FLIGHT_GRAPH = 2; // 200000
 final int FLIGHTS_BY_HOUR = 3; // 70000 or 150000
 final int flightsByDateMaxH = 150000;
 final int cancelledFlightsMaxH = 400;
 final int flightsByHourMaxH = 15000;
-
+int notExecuted = 1;
 Screen currentScreen, dateBarChart, homePage, cancelBarChart, dateAirport, flightInfoScreen, flightsPerHour, pieChart, otherChart;
 Widget totalFlights, divertedAndCancelled, returnToHomePage, query1, query2, query3,
-  home, flightInfo, showMe, availableFlights, flightsByHour, avFlights, pieChartWidget;
+  home, flightInfo, showMe, availableFlights, flightsByHour, avFlights, pieChartWidget, otherChartWidget;
 TextWidget date1, date2, focus, depTime1, depTime2, arrTime1, arrTime2, airport1, airport2;
 
 int lowDistValue;
@@ -76,6 +78,8 @@ FlightSchedule flightSchedule;
 int[] flightDates = new int[(dateHigh-dateLow)+1];
 boolean filterByAirport = false;
 int depHour;
+int arrHour;
+;
 DropDownMenu filterByDropDown; // NEW
 boolean filterByDateOption = false; // NEW
 boolean filterByDepTimeOption = false; // NEW
@@ -96,6 +100,8 @@ boolean arrTimeLowFirstClick = false; // NEW
 boolean arrTimeHighFirstClick = false; // NEW
 PFont ticketFont;
 boolean sliderAdded = false;
+int depTimeLowHour;
+int depTimeHighHour;
 
 void settings()
 {
@@ -103,15 +109,15 @@ void settings()
 }
 
 void setup() {
-  stdFont=loadFont("UDDigiKyokashoN-R-20.vlw");
-  ticketFont = loadFont("UDDigiKyokashoN-R-14.vlw");
+  stdFont=loadFont("ArialNarrow-20.vlw");
+  ticketFont = loadFont("ArialNarrow-14.vlw");
   textFont(stdFont);
   
   flightSchedule = new FlightSchedule();
   flights = new ArrayList<>();
   filteredFlights = new ArrayList<>();
   flightTickets = new ArrayList<FlightTicket>();
-  readData("flights_full.csv");
+  readData("flights-full.csv");
   
   filterByDropDown = new DropDownMenu(); // NEW
   sortByDropDown = new SortByDropDownMenu(); // NEW
@@ -130,6 +136,7 @@ void setup() {
 
   flightsByHour = new Widget(970, 460, 270, 40, 5, "Flights per Hour", purple, stdFont, EVENT_FLIGHTS_PER_HOUR);     //for flights by hour graph - rwan
   pieChartWidget = new Widget(970, 520, 270, 40, 5, "Pie Chart", purple, stdFont, EVENT_PIE_CHART);
+  //otherChartWidget = new Widget(970, 580, 270, 40, 5, "Other Chart", purple, stdFont, EVENT_OTHER_CHART);
 
   depTime1 = new TextWidget(width/2 - 120, 400, 70, 40, 5, "", purple, stdFont, EVENT_DEP_LOW, 10);
   depTime2 = new TextWidget(width/2 + 50, 400, 70, 40, 5, "", purple, stdFont, EVENT_DEP_HIGH, 10);
@@ -153,7 +160,7 @@ void setup() {
   flightInfoScreen = new Screen();
   flightsPerHour = new Screen();
   pieChart = new Screen();
-  otherChart = new Screen();
+  //otherChart = new Screen();
 
   currentScreen = homePage;
 
@@ -170,6 +177,7 @@ void setup() {
   cancelBarChart.add(returnToHomePage);
   flightInfoScreen.add(returnToHomePage);
 
+  
   //printTimeTotal(flightSchedule);
   //printFlightsPerDay();
   //printFlightsForAirport();
@@ -312,6 +320,12 @@ void mousePressed()
       currentScreen = pieChart;
       focus = null;
       break;
+    case EVENT_OTHER_CHART:
+      filterByDateOption = false;
+      currentScreen = otherChart;
+      focus = null;
+      break;
+
     default:
       event = EVENT_NULL;
       break;
@@ -328,11 +342,10 @@ void mousePressed()
     sortByDropDown.mousePressed();
     //filteredFlights = filterFlightsByDate(flights, dateLow, dateHigh);
   }
-//  if ( currentScreen == dateBarChart)
-//  {
- //  getFilteredMap(filteredFlights);
-       
- // }
+  if(currentScreen == dateBarChart || currentScreen == flightsPerHour || currentScreen == cancelBarChart)
+  {
+    dateBarChart.drawByDateChart();
+  }
  
 }
 
@@ -546,8 +559,8 @@ List<Flight> processData(BufferedReader reader) {
         int arrHour = Integer.parseInt(arrivalTime.substring(0,2));  // NEW
      
      
-        flightSchedule.addFlight(day, originCityName);
-        flightSchedule.addFlightByDepTime(depHour,originCityName);
+       // flightSchedule.addFlight(day, originCityName);
+       // flightSchedule.addFlightByDepTime(depHour,originCityName);
         double canc = Double.parseDouble(cancelled);
         
         
