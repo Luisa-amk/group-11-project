@@ -13,10 +13,10 @@ int xposAdd;
 for ( int i = dateLow; i <= dateHigh; i++)
 {
     int flightCount = flightSchedule.countFlightsForDate(i); 
-    //println(flightCount);
+    println(flightCount);
     int cmpMax = flightCount; 
     int barWidth = 30; 
-    maxBarHeight = 400; // larger this number , the taller the bars get 150,000
+    maxBarHeight = 15000; // larger this number , the taller the bars get 150,000
     
     
     int barHeight = (int) map(flightCount, 0, 18000, 0, maxBarHeight);// smaller 18000 -> smaller bars
@@ -28,7 +28,7 @@ for ( int i = dateLow; i <= dateHigh; i++)
     
    
     fill(0);
-    PFont labelFont = loadFont("UDDigiKyokashoN-R-20.vlw");    // change font 
+    PFont labelFont = loadFont("Bahnschrift-17.vlw");    // change font 
     textFont(labelFont);
     textAlign(CENTER);
     textSize(12);
@@ -54,7 +54,7 @@ for ( int i = dateLow; i <= dateHigh; i++)
     
  
 }
- PFont labelFont = loadFont("UDDigiKyokashoN-R-17.vlw");  
+ PFont labelFont = loadFont("Bahnschrift-17.vlw");  
     textFont(labelFont);
     int yPos = maxX/2;
     textSize(15);
@@ -75,9 +75,23 @@ for ( int i = dateLow; i <= dateHigh; i++)
  //j++;
   //}
   
+  notFinished = "Continue";
   }
   
+  ////
   
+  
+void thirdBarChart (List<Flight> flights)
+{
+  int i;
+  for(i = dateLow; i<=dateHigh; i++)
+  {
+    for ( Flight flight : flights )
+    {
+      
+    }
+  }
+}
   
   /////
   

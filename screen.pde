@@ -164,6 +164,7 @@
 
 class Screen {
   boolean methodExecuted = true;
+  int i = 1;
   color screenColor = color(255);
   Screen() {
     screenWidgets=new ArrayList();
@@ -171,6 +172,7 @@ class Screen {
   void add(Widget w) {
     screenWidgets.add(w);
   }
+  
   void draw() {
     textFont(stdFont);
     background(screenColor);
@@ -198,6 +200,7 @@ class Screen {
       screenWidgets.add(flightInfo);
       screenWidgets.add(flightsByHour);
       screenWidgets.add(pieChartWidget);
+      //screenWidgets.add(otherChartWidget);
 
       if (filterByAirport)
       {
@@ -234,6 +237,8 @@ class Screen {
       {
         screenWidgets.clear();
         slider.draw();
+
+        // ADD SLIDER
       }
       screenWidgets.add(home);
       screenWidgets.add(date1);
@@ -244,36 +249,19 @@ class Screen {
       screenWidgets.add(flightInfo);
       screenWidgets.add(flightsByHour);
       screenWidgets.add(pieChartWidget);
+      //screenWidgets.add(otherChartWidget);
     } else if (currentScreen == dateBarChart) // IM WORKING HERE RN
     {
-
-      if ( methodExecuted == true ) {
-        filteredFlights = filterFlightsByDate(flights, dateLow, dateHigh);
-        if (filterByAirport) {
-          filteredFlights = filterFlightsByAirports(filteredFlights, depAirport, destAirport);
-        }
-        if (filterByDepTimeOption) {
-          filteredFlights = filterFlightsByDepTime(filteredFlights, depTimeLow, depTimeHigh);
-        }
-        if ( filterByArrTimeOption) {
-          filteredFlights =  filterFlightsByArrivalTime(filteredFlights, arrTimeLow, arrTimeHigh);
-        }
-        if (filterByDistOption) {
-          filteredFlights = filterFlightsByDistance(filteredFlights, lowDistValue, highDistValue);
-        }
-
-        // readData("flights-full.csv");
-        //printDepAndDest();
-        //getFilteredMap(filteredFlights);
-        //getFilteredFlights(flights);
-        drawFlightsByDateGraph();
-
-        methodExecuted = true;
-      }
+     
+      BarCharts dateChart = new BarCharts();
+      dateChart.drawGraph(dateLow,dateHigh,FLIGHTS_BY_DATE,flightsByDateMaxH,flightSchedule);
+      //drawFlightsByDateGraph();   
       screenWidgets.clear();
       screenWidgets.add(returnToHomePage);
       cp5.remove("sliderRange");
       sliderAdded = false;
+      
+    
     } else if (currentScreen == dateAirport)
     {
       drawAirportGraph(flightSchedule);
@@ -283,15 +271,17 @@ class Screen {
       sliderAdded = false;
     } else if (currentScreen == cancelBarChart)
     {
-      drawCanGr();
+      BarCharts cancChart = new BarCharts();
+      cancChart.drawGraph(dateLow,dateHigh,CANCEL_FLIGHT_GRAPH,400,flightSchedule);
+     // drawCanGr();
       screenWidgets.clear();
       screenWidgets.add(returnToHomePage);
       cp5.remove("sliderRange");
       sliderAdded = false;
     } else if (currentScreen == flightInfoScreen)
     {
-
-      println(depAirport + " and  " + destAirport);
+      
+      println(depAirport + " and  " + destAirport); 
       sortByDropDown.draw();
       text("Sort By:", 1120, 120);
       screenWidgets.clear();
@@ -315,7 +305,10 @@ class Screen {
         filteredFlights = filterFlightsByDistance(filteredFlights, lowDistValue, highDistValue);
       }
 
+
       screenWidgets.add(avFlights);
+
+
 
       if (sortByFlightNumber) {
         sortByFlightNumber(filteredFlights);
@@ -336,13 +329,11 @@ class Screen {
         drawFlightTickets(filteredFlights);
       }
     } else if ( currentScreen == flightsPerHour) { // FLIGHTS PER HOUR MAKE IT WORK RWAN!!!
-
-      BarCharts byHourGraph = new BarCharts ();
-      byHourGraph.drawGraph(0, 23, FLIGHTS_BY_HOUR, flightsByHourMaxH, flightSchedule);
+          
+    BarCharts byHourGraph = new BarCharts (); 
+    byHourGraph.drawGraph(depTimeLowHour, depTimeHighHour, FLIGHTS_BY_HOUR, flightsByHourMaxH, flightSchedule);
       screenWidgets.clear();
       screenWidgets.add(returnToHomePage);           //draw bar charts in corresponding screen
-      cp5.remove("sliderRange");
-      sliderAdded = false;
     } else if (currentScreen == pieChart) {
       screenWidgets.clear();
       screenWidgets.add(returnToHomePage);
@@ -361,7 +352,6 @@ class Screen {
         filteredFlights = filterFlightsByDistance(filteredFlights, lowDistValue, highDistValue);
       }
       drawPieChart(filteredFlights);
-
     } else if (currentScreen == otherChart) {
       screenWidgets.clear();
       screenWidgets.add(returnToHomePage);
@@ -374,5 +364,28 @@ class Screen {
   ArrayList getWidgets()
   {
     return screenWidgets;
+  }
+  
+  void drawByDateChart()
+  {
+     filteredFlights = filterFlightsByDate(flights, dateLow, dateHigh);
+      if (filterByAirport) {
+        filteredFlights = filterFlightsByAirports(filteredFlights, depAirport, destAirport);
+      }
+      if (filterByDepTimeOption) {
+        filteredFlights = filterFlightsByDepTime(filteredFlights, depTimeLow, depTimeHigh);
+      }
+      if ( filterByArrTimeOption) {
+        filteredFlights =  filterFlightsByArrivalTime(filteredFlights, arrTimeLow, arrTimeHigh);
+      }
+      if (filterByDistOption) {
+        filteredFlights = filterFlightsByDistance(filteredFlights, lowDistValue, highDistValue);
+      }  
+      getFilteredMap(filteredFlights);
+      
+       depTimeLowHour = Integer.parseInt(depTimeLow.substring(0,2));
+       depTimeHighHour = Integer.parseInt(depTimeHigh.substring(0,2));
+      // getFilteredMap(filteredFlights);
+      // drawFlightsByDateGraph();      
   }
 }

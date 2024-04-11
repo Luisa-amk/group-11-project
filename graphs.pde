@@ -32,7 +32,7 @@ void drawCanGr() {
 
 
     fill(0);
-    PFont labelFont = loadFont("UDDigiKyokashoN-R-17.vlw");    // change font
+    PFont labelFont = loadFont("ArialNarrow-17.vlw");    // change font
     textFont(labelFont);
     textAlign(CENTER);
     text(Integer.toString(day), xpos + 10, height - 10-20);
@@ -56,6 +56,7 @@ PFont label1, label;
 PFont label2;
 
 void drawAirportGraph(FlightSchedule sampleFS) { // don't need to pass anything , as the hashmap contains everything you need already ;
+  stroke(0);
   int day = aStartDate;
   int i = 0;
   // creating the array of total flights per date;
@@ -76,7 +77,6 @@ void drawAirportGraph(FlightSchedule sampleFS) { // don't need to pass anything 
   int xpos = 310;
   for (int index=0; index<airFlights.length; index++) {
     int size = airFlights[index];
-    stroke(0);
     fill(bluegreen);
     rect(x, 675, 20, -size);
     x+=20;
@@ -170,4 +170,7 @@ void drawDateBarChart() {
     xpos += 30;
   }
 }
+
+
+
 /// ULTIMATE FLGIHTS BY DATE GR

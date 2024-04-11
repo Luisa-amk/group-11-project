@@ -4,9 +4,7 @@ void drawPieChart(List<Flight> filteredFlights) {
   int onScheduleCount = 0;
   int divertedCount = 0;
   int cancelledCount = 0;
-  color sageGreen = color(115, 183, 108);
   color orange = color(230, 155, 105);
-  color softRed = color(204, 95, 95);
 
   // Count the number of on schedule, diverted, and cancelled flights
   for (Flight flight : filteredFlights) {
@@ -28,32 +26,30 @@ void drawPieChart(List<Flight> filteredFlights) {
   background(255);
   stroke(0);
   float lastAngle = 0;
-  fill(sageGreen); 
+  fill(144, 238, 144); // Green for on schedule
   arc(width / 2, height / 2, 300, 300, lastAngle, lastAngle + onScheduleAngle);
   lastAngle += onScheduleAngle;
 
-  fill(orange); // Yellow for diverted
+  fill(255, 255, 0); // Yellow for diverted
   arc(width / 2, height / 2, 300, 300, lastAngle, lastAngle + divertedAngle);
   lastAngle += divertedAngle;
 
-  fill(softRed); // Red for cancelled
+  fill(255, 50, 50); // Red for cancelled
   arc(width / 2, height / 2, 300, 300, lastAngle, lastAngle + cancelledAngle);
 
   // Legend
   textAlign(LEFT, TOP);
-  fill(sageGreen); 
+  fill(255, 50, 50); // Blood Red
   textSize(17);
-  text("On Schedule Flights: " + onScheduleCount, 20, 60);
+  text("Cancelled Flights: " + cancelledCount, 20, 20);
+
+  fill(144, 238, 144); // Sage Green
+  textSize(17);
+  text("On Schedule Flights: " + onScheduleCount, 20, 40);
   
   fill(orange);
   textSize(17);
-  text("Diverted Flights: " + divertedCount, 20, 40);
-
-  fill(softRed); 
-  textSize(17);
-  text("Cancelled Flights: " + cancelledCount, 20, 20);
-  
-  
+  text("Diverted Flights: " + divertedCount , 20, 60 );
 }
 void drawTitle() {
   textAlign(CENTER, CENTER);
